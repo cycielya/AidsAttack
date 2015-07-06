@@ -47,10 +47,6 @@ public class AidsAttack extends Game.Default {
 
   World physicsWorld(){ return this.currentLevel.physicsWorld(); }
 
-  //Virus theVirus;
-  //Cell theCell;
-  //Antibody[] antibodies;
-
   // these methods were replaced by methods in Layer
   /*public void addLayer(Layer l){
     this.entityLayer.add(l);
@@ -73,16 +69,24 @@ public class AidsAttack extends Game.Default {
     return height/2f;
   }
 
-  @Override
-  public void init(){
+  public void populateLevelList(){
     levels = new Level[3];
     levels[0] = LevelOne.make(this);
+    levels[1] = LevelTwo.make(this);
+  }
+
+  @Override
+  public void init(){
+    populateLevelList();
     currentLevel = levels[0];
 
     camera = new Camera(this);
     currentLevel.initLevel(camera);
-    //camera.setWorldScale();
-
+    initKeyControls();
+    // adds buttons
+    initUI();
+  }
+  public void initKeyControls(){
     //hook up key listener, for global scaling in-game
     keyboard().setListener(new Keyboard.Adapter() {
       @Override
@@ -118,8 +122,6 @@ public class AidsAttack extends Game.Default {
         System.out.println("Key released!");
       }
     });
-    // adds buttons
-    initUI();
   }
 
   public void initUI(){
@@ -170,7 +172,10 @@ public class AidsAttack extends Game.Default {
       public void onPointerStart(Pointer.Event event){
         currentLevel.endLevel();
         graphics().rootLayer().destroyAll();
-        init();
+        currentLevel = levels[0];
+        currentLevel.initLevel(camera);
+        initKeyControls();
+        initUI();
       }
     });
 
@@ -202,20 +207,29 @@ public class AidsAttack extends Game.Default {
     currentLevel.success = true;
     System.out.println("Current level is: "+currentLevel);
     currentLevel.endLevel();
-    System.out.println("Current level is: "+currentLevel);
     graphics().rootLayer().destroyAll();
-    levels[1] = LevelTwo.make(this);
+    //levels[1] = LevelTwo.make(this);
     currentLevel = levels[1];
     System.out.println("Current level is: "+currentLevel);
     currentLevel.initLevel(camera);
-    System.out.println("Current level is: "+currentLevel);
     camera.reset();
     // adds the buttons back in
     initUI();
   }
+  public void successCurrentLevel(){
+    currentLevel.successLevel();
+    int i;
+    for(i=0; i<levels.length && currentLevel != levels[i]; i++){}
+    if(i >= levels.length-1){
+    }
+    else{
+      currentLevel = levels[i+1];
+    }
+    initUI();
+  }
 
-  Vec2 virusScreenTarget = new Vec2();
-  boolean attractingVirus = false;
+  //Vec2 virusScreenTarget = new Vec2();
+  //boolean attractingVirus = false;
   float minLength = 1f;
   float forceScale = 10f;
 

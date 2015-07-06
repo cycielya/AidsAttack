@@ -81,13 +81,6 @@ public class LevelTwo extends Level{
         if(hit != null){
           System.out.println("Hit a button.");
         }
-        hit = graphics().rootLayer().hitTest(p);
-        if(hit != null){
-          System.out.println("At least the root is here.");
-        }
-        else{
-          System.out.println("Something's very wrong...");
-        }
       }
     });
   }

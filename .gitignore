@@ -1,5 +1,6 @@
 *.class
 *.jar
+*.swp
 core/target
 *~
 *#
@@ -8,3 +9,4 @@ html/target
 android/target
 ios/target
 flash/target
+assets/target

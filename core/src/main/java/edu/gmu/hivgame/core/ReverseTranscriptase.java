@@ -48,14 +48,11 @@ public class ReverseTranscriptase implements CollisionHandler {
     rt.initPhysicsBody(level.physicsWorld(), x, y, ang);
     rt.drawRTImage();
 
-    GroupLayer testLayer = graphics().createGroupLayer();
+    /*GroupLayer testLayer = graphics().createGroupLayer();
     testLayer.setDepth(7f);
     graphics().rootLayer().add(testLayer);
-    System.out.println("added testlayer");
+    System.out.println("added testlayer");*/
 
-    // Choose one of the following to add the image. worldLayer is not displaying at all.
-    //testLayer.add(rt.myLayer);
-    //graphics().rootLayer().add(rt.myLayer);
     level.addLayer(rt.myLayer);
 
     rt.level = (LevelTwo) level;

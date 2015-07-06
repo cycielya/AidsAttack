@@ -93,10 +93,6 @@ public class LevelOne extends Level{
         if(hit != null){
           System.out.println("WorldLayer found!");
         }
-        hit = graphics().rootLayer().hitTest(p);
-        if(hit == null){
-          System.out.println("Something's very wrong...");
-        }
       }
       @Override
       public void onPointerEnd(Pointer.Event event) {
@@ -131,6 +127,14 @@ public class LevelOne extends Level{
       nextBody = null;
     }
   }
+  @Override
+  void successLevel(){
+    super.successLevel();
+    graphics().rootLayer().destroyAll();
+    game.currentLevel = game.levels[1];
+    game.currentLevel.initLevel(camera);
+    camera.reset();
+  }
 
   //World physicsWorld(){ return this.m_world; }
 
@@ -143,7 +147,7 @@ public class LevelOne extends Level{
       float r2 = (gravity.nextFloat() - 0.5f)*5f;
       Vec2 ng = new Vec2(r1,r2);
       System.out.printf("New gravity is: %f, %f\n",r1,r2);
-      //m_world.setGravity(ng);
+      m_world.setGravity(ng);
     }
 
     theVirus.update(delta);
