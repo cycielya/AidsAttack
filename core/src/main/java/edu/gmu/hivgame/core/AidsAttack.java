@@ -174,6 +174,7 @@ public class AidsAttack extends Game.Default {
         graphics().rootLayer().destroyAll();
         currentLevel = levels[0];
         currentLevel.initLevel(camera);
+        camera.reset();
         initKeyControls();
         initUI();
       }
@@ -225,6 +226,7 @@ public class AidsAttack extends Game.Default {
     else{
       currentLevel = levels[i+1];
     }
+    camera.reset();
     initUI();
   }
 

@@ -32,6 +32,7 @@ import playn.core.*;
 //Level Two: Reverse Transcriptase
 public class LevelTwo extends Level{
   ReverseTranscriptase theRT;
+  DNAStrand theDNA;
 
   static LevelTwo make(AidsAttack game){
     LevelTwo lt = new LevelTwo();
@@ -64,22 +65,20 @@ public class LevelTwo extends Level{
     // This should create the image as well as the physics body
     this.theRT = ReverseTranscriptase.make(game, this, 5f, 0f, 0f);
 
+    //make a DNAStrand
+    theDNA = DNAStrand.make(game, this, 10f, 20f, 2);
+
     // hook up pointer listener
     // currently just for testing of worldLayer
     pointer().setListener(new Pointer.Adapter() {
       @Override
       public void onPointerStart(Pointer.Event event) {
         Point p = new Point(event.x(), event.y());
-        Layer hit = worldLayer.hitTest(p);
-        if(hit == null){
-          System.out.println("no worldLayer here.");
-        }
-        else{
-          System.out.println("worldLayer hit!");
-        }
-        hit = game.buttonLayer.hitTest(p);
+        Layer hit = game.buttonLayer.hitTest(p);
         if(hit != null){
           System.out.println("Hit a button.");
+        }
+        else{
         }
       }
     });
@@ -87,12 +86,14 @@ public class LevelTwo extends Level{
   void update(int delta, int time){
     super.update(delta, time);
     theRT.update(delta);
+    theDNA.update(delta);
 
     // the step delta is fixed so box2d isn't affected by framerate
     m_world.step(0.033f, 10, 10);
   }
   void paint(float alpha){
     theRT.paint(alpha);
+    theDNA.paint(alpha);
   }
   String levelName(){
     return "Level Two";
