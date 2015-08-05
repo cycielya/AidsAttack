@@ -50,7 +50,7 @@ public class Antibody implements CollisionHandler{
     a.game = game;
     a.initPhysicsBody(game.physicsWorld(), x, y, ang);
     a.drawAntibodyImage();
-    game.addLayer(a.myLayer);
+    //game.addLayer(a.myLayer);
     a.prevX = a.x(); a.prevY = a.y(); a.prevA = a.ang();
     a.attracted = false;
     return a;
@@ -136,7 +136,7 @@ public class Antibody implements CollisionHandler{
     float angle = (game.time() + game.UPDATE_RATE*alpha) * (float) Math.PI / 1000;
   }
 
-  public void update(float delta){
+  public void update(int delta){
     prevX = x();
     prevY = y();
     prevA = ang();

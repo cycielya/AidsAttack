@@ -18,7 +18,7 @@ import playn.core.util.Callback;
 public class Camera{
   AidsAttack game;
   //a constant value for resetting the camera at the beginning of a level.
-  public static final float initSUPPU = 20.0f;
+  public static final float initSUPPU = 20.0f; //init Screen Unit Per Phys Unit
   public float screenUnitPerPhysUnit = 20.0f;
   public float screenPerPhysGoal = 20.0f;
   private float zoomStep = 0.1f;

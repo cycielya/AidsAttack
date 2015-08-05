@@ -371,7 +371,7 @@ public class Virus implements CollisionHandler {
     // myLayer.transform().setUniformScale(scale);    
   }
 
-  public void update(float delta) {
+  public void update(int delta) {
     // store state for interpolation in paint()
     prevX = x();
     prevY = y();

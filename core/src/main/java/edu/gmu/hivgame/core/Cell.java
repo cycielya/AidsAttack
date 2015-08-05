@@ -137,7 +137,7 @@ public class Cell implements CollisionHandler{
     float angle = (game.time() + game.UPDATE_RATE*alpha) * (float) Math.PI / 1000;
   }
 
-  public void update(float delta){
+  public void update(int delta){
     prevX = x();
     prevY = y();
     prevA = ang();

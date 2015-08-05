@@ -12,6 +12,8 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.DistanceJoint;
 import org.jbox2d.dynamics.joints.DistanceJointDef;
+import org.jbox2d.dynamics.joints.RopeJoint;
+import org.jbox2d.dynamics.joints.RopeJointDef;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
@@ -23,22 +25,24 @@ import static playn.core.PlayN.pointer;
 import playn.core.Pointer;
 
 
+// The base unit of DNA strands. Each nucleotide contains one Nucleobase, and can
+// pair with one other nucleotide, depending on the type of base each one has.
+// It can also strand link, which is to say, become associated with up to two
+// other nucleotides that would be on either side of it in a single-strand DNA or RNA.
 public class Nucleotide{
   AidsAttack game;
   private float width = 1f;
   private float height = 1f;
-  private Nucleobase nBase;
+  private Nucleobase nBase; // see enum Nucleobase definition below
   private Body body;
   private Fixture myBodyFixture;
   private ImageLayer myLayer;
   private float prevX, prevY, prevA;
   LevelTwo level;
-  private Nucleotide pair;
+  private Nucleotide pair; // the Nucleotide it is base-paired with
   private boolean movable;
-  private Body groundBody;
-  private MouseJoint mouseJoint;
-
-
+  private Body groundBody; // used for MouseJoint, does not have relevance to anything else
+  private MouseJoint mouseJoint; // to make a nucleotide player-controllable
 
   private Nucleotide(){}
   public static Nucleotide make(AidsAttack game, Level level, Nucleobase nBase, float x, float y, float ang){
@@ -51,7 +55,7 @@ public class Nucleotide{
     n.drawNucleotideImage();
     n.level.addLayer(n.myLayer);
     BodyDef groundBodyDef = new BodyDef();
-    n.groundBody = level.physicsWorld().createBody(groundBodyDef);
+    n.groundBody = level.physicsWorld().createBody(groundBodyDef); // groundBody only relevant for MouseJoint
     return n;
   }
   private void initPhysicsBody(World world, float x, float y, float ang){
@@ -59,6 +63,8 @@ public class Nucleotide{
     bodyDef.type = BodyType.DYNAMIC;
     bodyDef.position = new Vec2(x, y);
     bodyDef.angle = ang;
+    bodyDef.angularDamping = 1.0f;
+    bodyDef.linearDamping = 1.0f;
     Body body = world.createBody(bodyDef);
     //body.setSleepingAllowed(false);
     // NOTE: true sets body to asleep, false sets body to awake
@@ -71,9 +77,9 @@ public class Nucleotide{
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = polygonShape;
-    fixtureDef.friction = 0.1f;
-    fixtureDef.restitution = 0.4f;
-    fixtureDef.density = 1.0f;
+    fixtureDef.friction = 0.2f;
+    //fixtureDef.restitution = 0.4f;
+    fixtureDef.density = 10.0f;
 
     this.myBodyFixture = body.createFixture(fixtureDef);
     this.myBodyFixture.m_userData = this;
@@ -85,6 +91,7 @@ public class Nucleotide{
     float imageSize = 100;
     CanvasImage image = graphics().createImage(imageSize, imageSize);
     Canvas canvas = image.canvas();
+    //should be a darkish yellow, or gold color
     canvas.setFillColor(0xfffac22a);
     //coordinates are for upper-left corner placement
     canvas.fillRect(0f, 0f, imageSize, imageSize);
@@ -93,16 +100,26 @@ public class Nucleotide{
     myLayer.setScale(getWidth()/imageSize,getHeight()/imageSize);
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
+
+    //intended for allowing click+drag control of DNA strands.
     this.myLayer.addListener(new Pointer.Adapter() {
       @Override
       public void onPointerStart(Pointer.Event event){
         System.out.println("Pointer hit me! Waah!");
+        System.out.println("My Nucleobase is: ");
+        System.out.println(nBase);
         Vec2 pointerLocation = new Vec2(event.x(), event.y());
+        Vec2 physLocation = new Vec2(level.camera.screenXToPhysX(pointerLocation.x),
+                                     level.camera.screenYToPhysY(pointerLocation.y));
+        //System.out.println("Pointer is at: "+pointerLocation.toString());
+        //System.out.println("Physics location: "+physLocation.toString());
         MouseJointDef def = new MouseJointDef();
-        def.bodyA = groundBody;
+        def.bodyA = level.physicsWorld().createBody(new BodyDef());
         def.bodyB = body;
-        def.target.set(pointerLocation);
+        def.target.set(physLocation);
+        def.maxForce = 1000f * body.getMass();
         mouseJoint = (MouseJoint) level.physicsWorld().createJoint(def);
+        //System.out.println("The number of joints is: "+level.physicsWorld().getJointCount());
         body.setAwake(true);
       }
       @Override
@@ -111,8 +128,11 @@ public class Nucleotide{
         if(mouseJoint == null){
           return;
         }
+        //System.out.println("The number of joints is: "+level.physicsWorld().getJointCount());
         Vec2 pointerLocation = new Vec2(event.x(), event.y());
-        mouseJoint.setTarget(pointerLocation);
+        Vec2 physLocation = new Vec2(level.camera.screenXToPhysX(pointerLocation.x),
+                                     level.camera.screenYToPhysY(pointerLocation.y));
+        mouseJoint.setTarget(physLocation);
       }
       @Override
       public void onPointerEnd(Pointer.Event event){
@@ -122,19 +142,31 @@ public class Nucleotide{
         }
         level.physicsWorld().destroyJoint(mouseJoint);
         mouseJoint = null;
+        //body.setLinearVelocity(new Vec2(0f,0f));
       }
     });
   }
 
+  // other is the new Nucleotide being added to the strand.
+  // visualize as this being last one in a DNA strand, and other being added to the end.
   public void strandLink(Nucleotide other){
-    DistanceJointDef def = new DistanceJointDef();
-    def.initialize(this.body, other.body, new Vec2(0f,0f), new Vec2(0f, 0f));
-    DistanceJoint dj = (DistanceJoint) Joint.create(this.level.physicsWorld(), def);
+    RopeJointDef def = new RopeJointDef();
+    def.bodyA = this.body;
+    def.bodyB = other.body;
+    def.localAnchorA.set(0f+this.getWidth()/2f,0f-this.getHeight()/2f); //position at upper right corner
+    def.localAnchorB.set(0f-other.getWidth()/2f,0f-other.getHeight()/2f); //position at upper left corner
+    def.maxLength = .75f;
+    def.collideConnected = true;
+    RopeJoint rj = (RopeJoint) this.level.physicsWorld().createJoint(def);
+    def.localAnchorA.set(0f+this.getWidth()/2f, 0f+this.getHeight()/2f); //position at lower right corner
+    def.localAnchorB.set(0f-other.getWidth()/2f, 0f+other.getHeight()/2f); //position at lower left corner
+    RopeJoint rj2 = (RopeJoint) this.level.physicsWorld().createJoint(def);
   }
 
   public boolean pairsWith(Nucleotide other){
     return this.nBase.pairsWith(other.nBase);
   }
+  //attempts to pair two Nucleotides. Returns true on successful pairing, false on wrong pair.
   public boolean basePair(Nucleotide other){
     if(this.pairsWith(other)){
       this.pair = other;
@@ -203,9 +235,10 @@ enum Nucleobase{
   Nucleobase(String name){
     this.name = name;
   }
-  public String nameOf(Nucleobase n){
+  public static String toString(Nucleobase n){
     return n.name;
   }
+  // returns true if a given base, other, would naturally pair with this base.
   public boolean pairsWith(Nucleobase other){
     int i;
     for(i=0; i<pairsWith.length; i++){

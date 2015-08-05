@@ -5,10 +5,9 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.joints.Joint;
-import org.jbox2d.dynamics.joints.MouseJoint;
-import org.jbox2d.dynamics.joints.MouseJointDef;
 import static playn.core.PlayN.*;
 import java.util.*;
+import java.util.Random;
 
 //A single strand of DNA or RNA.
 //Double-stranded DNA is implemented with two linked DNAStrands.
@@ -17,8 +16,6 @@ public class DNAStrand{
   private AidsAttack game;
   private LevelTwo level;
   private LinkedList<Nucleotide> strand;
-  private Body groundBody;
-  private MouseJoint mouseJoint;
 
   private DNAStrand(AidsAttack game, Level level){
     this.game = game;
@@ -28,43 +25,25 @@ public class DNAStrand{
   public static DNAStrand make(AidsAttack game, Level level, float x, float y, int length){
     DNAStrand s = new DNAStrand(game, level);
     BodyDef bodyDef = new BodyDef();
-    s.groundBody = level.physicsWorld().createBody(bodyDef);
-    s.mouseJoint = null;
-    Nucleotide n = Nucleotide.make(game,level,Nucleobase.valueOf("C"),x, y, 0f);
-    Nucleotide n2 = Nucleotide.make(game,level,Nucleobase.valueOf("T"),x+1.1f, y, 0f);
-    s.addLast(n);
-    s.addLast(n2);
+    //Nucleotide n = Nucleotide.make(game,level,Nucleobase.valueOf("C"),x, y, 0f);
+    //Nucleotide n2 = Nucleotide.make(game,level,Nucleobase.valueOf("T"),x+1.1f, y, 0f);
+    //s.addLast(n);
+    //s.addLast(n2);
+    s.populateStrand(length, x, y);
     return s;
   }
 
-  public MouseJoint getMouseJoint(){
-    return this.mouseJoint;
-  }
-
-  // Parameters governing motion of strand
-  float minLength = 1f;
-  float forceScale = 10f;
-
-  public void attractToPointer(Vec2 target, Body body){
-    MouseJointDef def = new MouseJointDef();
-    def.bodyA = groundBody;
-    def.bodyB = body;
-    def.target.set(target);
-    //def.maxForce = 1000f * body.getMass();
-    mouseJoint = (MouseJoint) level.physicsWorld().createJoint(def);
-  }
-  
-  public void attractHead(Vec2 target){
-    if(strand.size() == 0){
-      return;
+  private void populateStrand(int length, float x, float y){
+    Random r = new Random();
+    Nucleobase [] bases = Nucleobase.values();
+    int i;
+    float separationDist = 1.5f;
+    int baseChoice;
+    for(i=0; i<length; i++){
+      baseChoice = Math.abs(r.nextInt()) % bases.length;
+      Nucleotide n = Nucleotide.make(this.game, this.level, bases[baseChoice], x+separationDist*i, y, 0f);
+      this.addLast(n);
     }
-    Nucleotide n = strand.getFirst();
-    Vec2 force = target.sub(n.position());
-    float length = force.normalize(); // Alters force vector, length returned
-    if(length > minLength){
-      force.mulLocal(forceScale);
-    }
-    n.body().applyForceToCenter(force);
   }
 
   private void addLast(Nucleotide n){
@@ -75,6 +54,7 @@ public class DNAStrand{
     strand.addLast(n);
   }
 
+  // no physical body itself, so need to update each individual Nucleotide
   public void update(int delta){
     if(strand.size() == 0){
       return;

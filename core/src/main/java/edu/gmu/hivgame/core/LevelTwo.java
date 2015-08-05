@@ -66,22 +66,10 @@ public class LevelTwo extends Level{
     this.theRT = ReverseTranscriptase.make(game, this, 5f, 0f, 0f);
 
     //make a DNAStrand
-    theDNA = DNAStrand.make(game, this, 10f, 20f, 2);
+    theDNA = DNAStrand.make(game, this, 10f, 20f, 5);
 
     // hook up pointer listener
     // currently just for testing of worldLayer
-    pointer().setListener(new Pointer.Adapter() {
-      @Override
-      public void onPointerStart(Pointer.Event event) {
-        Point p = new Point(event.x(), event.y());
-        Layer hit = game.buttonLayer.hitTest(p);
-        if(hit != null){
-          System.out.println("Hit a button.");
-        }
-        else{
-        }
-      }
-    });
   }
   void update(int delta, int time){
     super.update(delta, time);
