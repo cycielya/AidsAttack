@@ -69,9 +69,14 @@ public class LevelTwo extends Level{
     //make a DNAStrand
     theDNA = DNAStrand.make(game, this, 10f, 20f, 5);
 
-    // hook up pointer listener
-    // currently just for testing of worldLayer
   }
+
+  public void testStrandEnds(Nucleotide n){
+    if(this.theDNA.compareFirst(n) || this.theDNA.compareLast(n)){
+      System.out.println("Starting minigame!");
+    }
+  }
+
   void updateLevel(int delta, int time){
     theRT.update(delta);
     theDNA.update(delta);

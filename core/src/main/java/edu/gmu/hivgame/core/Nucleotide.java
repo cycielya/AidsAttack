@@ -101,7 +101,8 @@ public class Nucleotide implements CollisionHandler{
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
 
-    //intended for allowing click+drag control of DNA strands.
+    // intended for allowing click+drag control of DNA strands and
+    // individual nucleotides
     this.myLayer.addListener(new Pointer.Adapter() {
       @Override
       public void onPointerStart(Pointer.Event event){
@@ -110,15 +111,12 @@ public class Nucleotide implements CollisionHandler{
         Vec2 pointerLocation = new Vec2(event.x(), event.y());
         Vec2 physLocation = new Vec2(level.camera.screenXToPhysX(pointerLocation.x),
                                      level.camera.screenYToPhysY(pointerLocation.y));
-        //System.out.println("Pointer is at: "+pointerLocation.toString());
-        //System.out.println("Physics location: "+physLocation.toString());
         MouseJointDef def = new MouseJointDef();
         def.bodyA = level.physicsWorld().createBody(new BodyDef());
         def.bodyB = body;
         def.target.set(physLocation);
         def.maxForce = 1000f * body.getMass();
         mouseJoint = (MouseJoint) level.physicsWorld().createJoint(def);
-        //System.out.println("The number of joints is: "+level.physicsWorld().getJointCount());
         body.setAwake(true);
       }
       @Override
@@ -213,7 +211,7 @@ public class Nucleotide implements CollisionHandler{
     myLayer.setRotation(a);
   }
   public void handleCollision(Fixture me, Fixture other){
-    if(other.m_userData instanceof ReverseTranscriptase){
+    if(me == this.myBodyFixture && other.m_userData instanceof ReverseTranscriptase){
       System.out.println("Hit the RT!");
     }
   }

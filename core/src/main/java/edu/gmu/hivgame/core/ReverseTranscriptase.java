@@ -137,8 +137,10 @@ public class ReverseTranscriptase implements CollisionHandler {
 
   public void handleCollision(Fixture me, Fixture other){
     System.out.println("Ran into something!");
-    if(other.m_userData instanceof Nucleotide){
+    if(me == this.myBodyFixture && other.m_userData instanceof Nucleotide){
       System.out.println("Wow such Nucleotide.");
+      Nucleotide n = (Nucleotide) other.m_userData;
+      level.testStrandEnds(n);
     }
     else{
       System.out.println("Contacted: "+other.m_userData.toString());

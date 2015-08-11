@@ -62,6 +62,15 @@ public class DNAStrand{
     return itr;
   }
 
+  // Returns true if n is the first element of the strand
+  public boolean compareFirst(Nucleotide n){
+    return n.equals(strand.getFirst());
+  }
+  // Returns true if n is the last element of the strand
+  public boolean compareLast(Nucleotide n){
+    return n.equals(strand.getLast());
+  }
+
   // no physical body itself, so need to update each individual Nucleotide
   public void update(int delta){
     if(strand.size() == 0){
