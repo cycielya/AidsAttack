@@ -29,7 +29,7 @@ import playn.core.Pointer;
 // pair with one other nucleotide, depending on the type of base each one has.
 // It can also strand link, which is to say, become associated with up to two
 // other nucleotides that would be on either side of it in a single-strand DNA or RNA.
-public class Nucleotide{
+public class Nucleotide implements CollisionHandler{
   AidsAttack game;
   private float width = 1f;
   private float height = 1f;
@@ -40,7 +40,7 @@ public class Nucleotide{
   private float prevX, prevY, prevA;
   LevelTwo level;
   private Nucleotide pair; // the Nucleotide it is base-paired with
-  private boolean movable;
+  //private boolean movable;
   private Body groundBody; // used for MouseJoint, does not have relevance to anything else
   private MouseJoint mouseJoint; // to make a nucleotide player-controllable
 
@@ -69,8 +69,8 @@ public class Nucleotide{
     //body.setSleepingAllowed(false);
     // NOTE: true sets body to asleep, false sets body to awake
     // Not very intuitive, so be aware that it's backwards!
-    body.setAwake(true);
-    movable = false;
+    //body.setAwake(true);
+    //movable = false;
 
     PolygonShape polygonShape = new PolygonShape();
     polygonShape.setAsBox(width/2f, height/2f);
@@ -105,7 +105,6 @@ public class Nucleotide{
     this.myLayer.addListener(new Pointer.Adapter() {
       @Override
       public void onPointerStart(Pointer.Event event){
-        System.out.println("Pointer hit me! Waah!");
         System.out.println("My Nucleobase is: ");
         System.out.println(nBase);
         Vec2 pointerLocation = new Vec2(event.x(), event.y());
@@ -124,7 +123,6 @@ public class Nucleotide{
       }
       @Override
       public void onPointerDrag(Pointer.Event event){
-        System.out.println("Mo-om! Pointer's being mean!");
         if(mouseJoint == null){
           return;
         }
@@ -136,7 +134,6 @@ public class Nucleotide{
       }
       @Override
       public void onPointerEnd(Pointer.Event event){
-        System.out.println("Pointer, go to your room!");
         if(mouseJoint == null){
           return;
         }
@@ -168,12 +165,14 @@ public class Nucleotide{
   }
   //attempts to pair two Nucleotides. Returns true on successful pairing, false on wrong pair.
   public boolean basePair(Nucleotide other){
+    this.pair = other;
+    other.pair = this;
     if(this.pairsWith(other)){
-      this.pair = other;
-      other.pair = this;
       return true;
     }
-    return false;
+    else{
+      return false;
+    }
   }
   public boolean isBasePaired(){
     return (this.pair == null);
@@ -213,6 +212,11 @@ public class Nucleotide{
     myLayer.setTranslation(x, y);
     myLayer.setRotation(a);
   }
+  public void handleCollision(Fixture me, Fixture other){
+    if(other.m_userData instanceof ReverseTranscriptase){
+      System.out.println("Hit the RT!");
+    }
+  }
 }
 
 /* Each nucleotide contains one nucleobase, which determines what other
@@ -221,10 +225,10 @@ public class Nucleotide{
  * NOTE: C,G,A and T occur in DNA, whereas C,G,A and U occur in RNA.
 */
 enum Nucleobase{
+  T ("thymine"),
   C ("cytosine"),
   G ("guanine"),
   A ("adenine"),
-  T ("thymine"),
   U ("uracil");
   private final String name;
   private static final Nucleobase[][] pairsWith = {

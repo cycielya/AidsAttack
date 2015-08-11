@@ -9,6 +9,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
+import org.jbox2d.dynamics.Fixture;
 
 import java.math.*;
 import pythagoras.f.Point;
@@ -63,7 +64,7 @@ public class LevelTwo extends Level{
 
     // make the ReverseTranscriptase
     // This should create the image as well as the physics body
-    this.theRT = ReverseTranscriptase.make(game, this, 5f, 0f, 0f);
+    this.theRT = ReverseTranscriptase.make(game, this, 15f, 10f, 0f);
 
     //make a DNAStrand
     theDNA = DNAStrand.make(game, this, 10f, 20f, 5);
@@ -71,11 +72,32 @@ public class LevelTwo extends Level{
     // hook up pointer listener
     // currently just for testing of worldLayer
   }
-  void update(int delta, int time){
-    super.update(delta, time);
+  void updateLevel(int delta, int time){
     theRT.update(delta);
     theDNA.update(delta);
 
+    Contact contact = m_world.getContactList();
+    while(contact != null){
+      if(contact.isTouching()){
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
+        if(fixtureA.m_userData instanceof CollisionHandler){
+          CollisionHandler ch = (CollisionHandler) fixtureA.m_userData;
+          ch.handleCollision(fixtureA, fixtureB);
+        }
+        if(fixtureB.m_userData instanceof CollisionHandler){
+          CollisionHandler ch = (CollisionHandler) fixtureB.m_userData;
+          ch.handleCollision(fixtureB, fixtureA);
+        }
+      }
+      contact = contact.getNext();
+    }
+  }
+  void update(int delta, int time){
+    if(!gameOver && !success){
+      super.update(delta, time);
+      updateLevel(delta, time);
+    }
     // the step delta is fixed so box2d isn't affected by framerate
     m_world.step(0.033f, 10, 10);
   }

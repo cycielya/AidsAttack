@@ -54,6 +54,14 @@ public class DNAStrand{
     strand.addLast(n);
   }
 
+  public void addNucleotide(Nucleotide n){
+    this.addLast(n);
+  }
+  public ListIterator<Nucleotide> getIterator(){
+    ListIterator<Nucleotide> itr = strand.listIterator(0);
+    return itr;
+  }
+
   // no physical body itself, so need to update each individual Nucleotide
   public void update(int delta){
     if(strand.size() == 0){

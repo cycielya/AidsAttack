@@ -13,9 +13,14 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
+import org.jbox2d.dynamics.joints.Joint;
+import org.jbox2d.dynamics.joints.MouseJoint;
+import org.jbox2d.dynamics.joints.MouseJointDef;
 
 import static playn.core.PlayN.assets;
 import static playn.core.PlayN.graphics;
+import static playn.core.PlayN.pointer;
+import playn.core.Pointer;
 
 import playn.core.CanvasImage;
 import playn.core.Canvas;
@@ -40,6 +45,8 @@ public class ReverseTranscriptase implements CollisionHandler {
   private ImageLayer myLayer;
   AidsAttack game;
   LevelTwo level;
+  private Body groundBody; // used for MouseJoint, does not have relevance to anything else
+  private MouseJoint mouseJoint; // to make a nucleotide player-controllable
 
   private ReverseTranscriptase(){}
   public static ReverseTranscriptase make(AidsAttack game, Level level, float x, float y, float ang){
@@ -48,15 +55,12 @@ public class ReverseTranscriptase implements CollisionHandler {
     rt.initPhysicsBody(level.physicsWorld(), x, y, ang);
     rt.drawRTImage();
 
-    /*GroupLayer testLayer = graphics().createGroupLayer();
-    testLayer.setDepth(7f);
-    graphics().rootLayer().add(testLayer);
-    System.out.println("added testlayer");*/
-
     level.addLayer(rt.myLayer);
 
     rt.level = (LevelTwo) level;
     rt.prevX = rt.x(); rt.prevY = rt.y(); rt.prevA = rt.ang();
+    BodyDef groundBodyDef = new BodyDef();
+    rt.groundBody = level.physicsWorld().createBody(groundBodyDef); // groundBody only relevant for MouseJoint
     return rt;
   }
 
@@ -96,9 +100,49 @@ public class ReverseTranscriptase implements CollisionHandler {
     myLayer.setRotation(ang());
     myLayer.setScale(diameter/imageSize, diameter/imageSize);
     myLayer.setDepth(6);
+    this.myLayer.addListener(new Pointer.Adapter() {
+      @Override
+      public void onPointerStart(Pointer.Event event){
+        Vec2 pointerLocation = new Vec2(event.x(), event.y());
+        Vec2 physLocation = new Vec2(level.camera.screenXToPhysX(pointerLocation.x),
+                                     level.camera.screenYToPhysY(pointerLocation.y));
+        MouseJointDef def = new MouseJointDef();
+        def.bodyA = level.physicsWorld().createBody(new BodyDef());
+        def.bodyB = body;
+        def.target.set(physLocation);
+        def.maxForce = 1000f * body.getMass();
+        mouseJoint = (MouseJoint) level.physicsWorld().createJoint(def);
+      }
+      @Override
+      public void onPointerDrag(Pointer.Event event){
+        if(mouseJoint == null){
+          return;
+        }
+        //System.out.println("The number of joints is: "+level.physicsWorld().getJointCount());
+        Vec2 pointerLocation = new Vec2(event.x(), event.y());
+        Vec2 physLocation = new Vec2(level.camera.screenXToPhysX(pointerLocation.x),
+                                     level.camera.screenYToPhysY(pointerLocation.y));
+        mouseJoint.setTarget(physLocation);
+      }
+      @Override
+      public void onPointerEnd(Pointer.Event event){
+        if(mouseJoint == null){
+          return;
+        }
+        level.physicsWorld().destroyJoint(mouseJoint);
+        mouseJoint = null;
+      }
+    });
   }
 
   public void handleCollision(Fixture me, Fixture other){
+    System.out.println("Ran into something!");
+    if(other.m_userData instanceof Nucleotide){
+      System.out.println("Wow such Nucleotide.");
+    }
+    else{
+      System.out.println("Contacted: "+other.m_userData.toString());
+    }
   }
 
   float x(){
