@@ -80,7 +80,6 @@ public class LevelTwo extends Level{
   void updateLevel(int delta, int time){
     theRT.update(delta);
     theDNA.update(delta);
-
     Contact contact = m_world.getContactList();
     while(contact != null){
       if(contact.isTouching()){
@@ -98,6 +97,7 @@ public class LevelTwo extends Level{
       contact = contact.getNext();
     }
   }
+
   void update(int delta, int time){
     if(!gameOver && !success){
       super.update(delta, time);

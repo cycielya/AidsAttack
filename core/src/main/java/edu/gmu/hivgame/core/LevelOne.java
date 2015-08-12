@@ -15,6 +15,8 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.util.Random;
+import java.util.LinkedList;
+import java.util.*;
 import java.math.*;
 import pythagoras.f.Point;
 
@@ -39,7 +41,8 @@ public class LevelOne extends Level{
   boolean attractingVirus;
   Virus theVirus;
   Cell theCell;
-  Antibody[] antibodies;
+  //Antibody[] antibodies;
+  LinkedList<Antibody> antibodiesLL;
 
   Vec2 virusScreenTarget = new Vec2();
   float minLength = 1f;
@@ -50,6 +53,23 @@ public class LevelOne extends Level{
     LevelOne lv = new LevelOne();
     lv.game = game;
     return lv;
+  }
+
+  void populateAntibodies(int num){
+    if(this.antibodiesLL == null){
+      this.antibodiesLL = new LinkedList<Antibody>();
+    }
+    if(this.antibodiesLL.size() == 0){
+      Random r = new Random(54321);
+      for(int i=0; i<num; i++){
+        float x = r.nextFloat();
+        System.out.println("Random x is: "+x);
+        float y = r.nextFloat();
+        System.out.println("Random y is: "+y);
+        Antibody a = Antibody.make(this.game, this, x*50, y*50, .2f);
+        antibodiesLL.addLast(a);
+      }
+    }
   }
 
   @Override
@@ -66,13 +86,14 @@ public class LevelOne extends Level{
 
     // Random to distribute Antibodies on screen
     Random r = new Random(12345);
-    antibodies = new Antibody[6];
+    /*antibodies = new Antibody[6];
     for(int i=0; i<antibodies.length; i++){
       float x = r.nextFloat();
       float y = r.nextFloat(); 
       Antibody a = Antibody.make(this.game, this, x*50, y*50, .2f);
       antibodies[i] = a;
-    }
+    }*/
+    populateAntibodies(5);
 
     // Hook up pointer listener to control Virus
     pointer().setListener(new Pointer.Adapter() {
@@ -126,6 +147,9 @@ public class LevelOne extends Level{
       bodyList = nextBody;
       nextBody = null;
     }
+    if(antibodiesLL != null){
+      antibodiesLL.clear();
+    }
   }
   @Override
   void successLevel(){
@@ -159,8 +183,20 @@ public class LevelOne extends Level{
         camera.screenYToPhysY(virusScreenTarget.y));
       theVirus.attractTowards(virusPhysTarget);
     }
-    for(int i=0; i<antibodies.length; i++){
+    /*for(int i=0; i<antibodies.length; i++){
       antibodies[i].update(delta);
+    }*/
+    if(antibodiesLL != null){
+      ListIterator<Antibody> itr = antibodiesLL.listIterator(0);
+      while(itr.hasNext()){
+        Antibody a = itr.next();
+        if(a.isDestroyed()){
+          itr.remove();
+        }
+        else{
+          a.update(delta);
+        }
+      }
     }
 
     //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,
@@ -195,8 +231,14 @@ public class LevelOne extends Level{
     if(!gameOver && !success){
       theVirus.paint(alpha);
       theCell.paint(alpha);
-      for(int i=0; i<antibodies.length; i++){
+      /*for(int i=0; i<antibodies.length; i++){
         antibodies[i].paint(alpha);
+      }*/
+      if(antibodiesLL != null){
+        ListIterator<Antibody> itr = antibodiesLL.listIterator(0);
+        while(itr.hasNext()){
+          itr.next().paint(alpha);
+        }
       }
     }
   }

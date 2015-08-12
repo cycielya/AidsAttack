@@ -30,6 +30,7 @@ public class Antibody implements CollisionHandler{
   AidsAttack game;
   Level level;
   private boolean attracted;
+  private boolean destroyed;
 
   //Mostly mimics layout of Virus class.
   private Antibody(){
@@ -43,6 +44,7 @@ public class Antibody implements CollisionHandler{
     a.level.addLayer(a.myLayer);
     a.prevX = a.x(); a.prevY = a.y(); a.prevA = a.ang();
     a.attracted = false;
+    a.destroyed = false;
     return a;
   }
   public static Antibody make(AidsAttack game, float x, float y, float ang){
@@ -116,6 +118,9 @@ public class Antibody implements CollisionHandler{
   float ang(){
     return body.getAngle();
   }
+  public boolean isDestroyed(){
+    return this.destroyed;
+  }
 
 
   public void attractTowards(Vec2 target){
@@ -127,6 +132,9 @@ public class Antibody implements CollisionHandler{
 
 
   public void paint(float alpha){
+    if(this.destroyed){
+      return;
+    }
     float x = (x() * alpha) + (prevX * (1f - alpha));
     float y = (y() * alpha) + (prevY * (1f - alpha));
     float a = (ang() * alpha) + (prevA * (1f - alpha));
@@ -137,6 +145,9 @@ public class Antibody implements CollisionHandler{
   }
 
   public void update(int delta){
+    if(this.destroyed){
+      return;
+    }
     prevX = x();
     prevY = y();
     prevA = ang();
@@ -154,5 +165,6 @@ public class Antibody implements CollisionHandler{
     this.level.removeLayer(this.myLayer);
     // remove physics body
     this.game.physicsWorld().destroyBody(this.body);
+    this.destroyed = true;
   }
 }
