@@ -154,10 +154,12 @@ public class LevelOne extends Level{
   @Override
   void successLevel(){
     super.successLevel();
+    //FIXME: This is dangerous! May cause thrown exceptions if any method attempts to remove a layer from
+    //    a groupLayer after doing this.
     graphics().rootLayer().destroyAll();
-    game.currentLevel = game.levels[1];
-    game.currentLevel.initLevel(camera);
-    camera.reset();
+    //game.currentLevel = game.levels[1];
+    //game.currentLevel.initLevel(camera);
+    //camera.reset();
   }
 
   //World physicsWorld(){ return this.m_world; }

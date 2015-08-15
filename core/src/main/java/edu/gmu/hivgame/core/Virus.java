@@ -132,7 +132,7 @@ public class Virus implements CollisionHandler {
     }
     if(!cellContact && me == this.myBodyFixture && other.m_userData instanceof Cell){
       cellContact = true;
-      game.successLevelOne();
+      game.successCurrentLevel();
     }
     if(me == this.mySensor){
       System.out.println("I've been spotted by "+other.m_userData);

@@ -69,6 +69,8 @@ public abstract class Level{
   }
 
   void endLevel(){
+    //FIXME: destroying all may be dangerous. Might be cause of thrown exceptions when
+    //    attempting to remove a ButtonLayer upon moving to new level.
     worldLayer.destroyAll();
     worldLayer.destroy();
   }

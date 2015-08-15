@@ -107,8 +107,10 @@ public class LevelTwo extends Level{
     m_world.step(0.033f, 10, 10);
   }
   void paint(float alpha){
-    theRT.paint(alpha);
-    theDNA.paint(alpha);
+    if(!gameOver && !success){
+      theRT.paint(alpha);
+      theDNA.paint(alpha);
+    }
   }
   String levelName(){
     return "Level Two";

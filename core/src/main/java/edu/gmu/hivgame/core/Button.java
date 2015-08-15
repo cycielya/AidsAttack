@@ -46,6 +46,8 @@ public class Button{
   private float height;
   private String label;
   AidsAttack game;
+  static int buttonFillColor = 0xffffff00;
+  static int buttonTextColor = 0xffff0000;
   //need an ImageLayer to hold the button itself
   //on ImageLayer, need pointer listener. Should call whatever the button does.
   ImageLayer buttonImage;
@@ -63,12 +65,15 @@ public class Button{
     CanvasImage image = graphics().createImage(this.width, this.height);
     Canvas canvas = image.canvas();
     canvas.setStrokeWidth(2);
-    canvas.setFillColor(0xffffff00);
+    canvas.setFillColor(buttonFillColor);
     canvas.fillRect(0,0,this.width,this.height);
-    canvas.setFillColor(0xffff0000);
+    canvas.setFillColor(buttonTextColor);
     canvas.drawText(this.label,this.width/3f,this.height/2f);
     this.buttonImage = graphics().createImageLayer(image);
     this.buttonImage.setTranslation(xPos,yPos);
     game.addButton(this.buttonImage);
+  }
+  public void destroy(){
+    game.removeButton(this.buttonImage);
   }
 }

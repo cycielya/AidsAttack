@@ -44,18 +44,40 @@ public class AidsAttack extends Game.Default {
   public Camera camera;
   Level[] levels;
   Level currentLevel;
+  private boolean gamePaused = false;
 
   World physicsWorld(){ return this.currentLevel.physicsWorld(); }
 
-  // these methods were replaced by methods in Layer
-  /*public void addLayer(Layer l){
-    this.entityLayer.add(l);
-  }
-  public void removeLayer(Layer l){
-    this.entityLayer.remove(l);
-  }*/
   public void addButton(Layer l){
     this.buttonLayer.add(l);
+  }
+  public void removeButton(Layer l){
+    this.buttonLayer.remove(l);
+  }
+
+  Button resumeButton;
+  public void pauseGame(){
+    if(this.gamePaused == true){
+      return;
+    }
+    this.gamePaused = true;
+    this.resumeButton = Button.make(this, 10f, 130f, "resume");
+    this.resumeButton.buttonImage.addListener(new Pointer.Adapter() {
+      @Override
+      public void onPointerStart(Pointer.Event event){
+        resumeGame();
+      }
+    });
+  }
+  public void resumeGame(){
+    if(this.resumeButton != null){
+      this.resumeButton.destroy();
+      this.resumeButton = null;
+    }
+    this.gamePaused = false;
+  }
+  public boolean isGamePaused(){
+    return this.gamePaused;
   }
 
   public AidsAttack() {
@@ -85,6 +107,7 @@ public class AidsAttack extends Game.Default {
     initKeyControls();
     // adds buttons
     initUI();
+    //resumeGame();
   }
   public void initKeyControls(){
     //hook up key listener, for global scaling in-game
@@ -114,7 +137,7 @@ public class AidsAttack extends Game.Default {
         }
         //for testing only.
         else if(event.key() == Key.valueOf("N")){
-          successLevelOne();
+          successCurrentLevel();
         }
       }
       @Override
@@ -179,7 +202,17 @@ public class AidsAttack extends Game.Default {
         initUI();
       }
     });
+    Button pauseButton = Button.make(this, 10f, 100f, "pause");
+    pauseButton.buttonImage.addListener(new Pointer.Adapter() {
+      @Override
+      public void onPointerStart(Pointer.Event event){
+        System.out.println("Pausing game!");
+        pauseGame();
+      }
+    });
+    resumeButton = null;
 
+    resumeGame();
   }
 
   boolean gameOver = false;
@@ -218,6 +251,7 @@ public class AidsAttack extends Game.Default {
     initUI();
   }
   public void successCurrentLevel(){
+    currentLevel.endLevel();
     currentLevel.successLevel();
     int i;
     for(i=0; i<levels.length && currentLevel != levels[i]; i++){}
@@ -226,6 +260,7 @@ public class AidsAttack extends Game.Default {
     else{
       currentLevel = levels[i+1];
     }
+    currentLevel.initLevel(camera);
     camera.reset();
     initUI();
   }
@@ -245,68 +280,19 @@ public class AidsAttack extends Game.Default {
   public void update(int delta) {
     time += delta;
     time = time < 0 ? 0 : time;
-    //levels[0].update(delta, time);
-    camera.update();
-    currentLevel.update(delta, time);
+    if(!isGamePaused()){
+      camera.update();
+      currentLevel.update(delta, time);
+    }
     // world is no longer updated in AidsAttack
     //world.step(0.033f, 10, 10);
   }
 
-  // This method is not currently in use.
-  // See update() method in Level class
-  /*public void updateLevelOne(int delta){
-    if(time%100 == 0){
-      float r1 = (gravity.nextFloat() - 0.5f)*5f;
-      float r2 = (gravity.nextFloat() - 0.5f)*5f;
-      //float r1 = 0f;
-      //float r2 = 100f;
-      Vec2 ng = new Vec2(r1,r2);
-      System.out.printf("New gravity is: %f, %f\n",r1,r2);
-      //world.setGravity(ng);
-    }
-    theVirus.update(delta);
-    theCell.update(delta);
-
-    if(this.attractingVirus){
-      Vec2 virusPhysTarget = new Vec2();
-      virusPhysTarget.set(camera.screenXToPhysX(virusScreenTarget.x),
-        camera.screenYToPhysY(virusScreenTarget.y));
-      theVirus.attractTowards(virusPhysTarget);
-    }
-    for(int i=0; i<antibodies.length; i++){
-      antibodies[i].update(delta);
-    }
-
-    //Handling Contacts between fixtures. m_userData of Virus and Antibodies is themselves,
-    //and they implement the interface CollisionHandler.
-    Contact contact = physicsWorld().getContactList();
-    while(contact != null){
-      if(contact.isTouching()){
-        Fixture fixtureA = contact.getFixtureA();
-        Fixture fixtureB = contact.getFixtureB();
-        if(fixtureA.m_userData instanceof CollisionHandler){
-          CollisionHandler ch = (CollisionHandler) fixtureA.m_userData;
-          ch.handleCollision(fixtureA, fixtureB);
-        }
-        if(fixtureB.m_userData instanceof CollisionHandler){
-          CollisionHandler ch = (CollisionHandler) fixtureB.m_userData;
-          ch.handleCollision(fixtureB, fixtureA);
-        }
-      }
-      contact = contact.getNext();
-    }
-  }*/
-
   @Override
   public void paint(float alpha) {
     // the background automatically paints itself, so no need to do anything here!
-    currentLevel.paint(alpha);
-    /*if(!gameOver && !successLevelOne){
-      theVirus.paint(alpha);
-      theCell.paint(alpha);
-      for(int i=0; i<antibodies.length; i++){
-        antibodies[i].paint(alpha);
-      }
-    }*/
+    if(!isGamePaused()){
+      currentLevel.paint(alpha);
+    }
   }
 }

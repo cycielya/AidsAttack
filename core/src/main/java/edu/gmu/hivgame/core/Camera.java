@@ -144,6 +144,5 @@ public class Camera{
   public void update(){
     updateZoom();
     updateTranslation();
-    //game.currentLevel.worldLayer.transform();
   }
 }
