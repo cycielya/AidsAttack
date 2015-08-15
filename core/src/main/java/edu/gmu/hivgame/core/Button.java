@@ -34,13 +34,7 @@ import playn.core.Key;
 import playn.core.util.Callback;
 import playn.core.*;
 
-//public enum ButtonFunction{
-  //ZOOM_IN, ZOOM_OUT, RESET
-//}
 public class Button{
-  public enum ButtonFunction{
-    ZOOM_IN, ZOOM_OUT, RESET
-  }
   //in what units? pixels?
   private float width;
   private float height;
@@ -52,6 +46,7 @@ public class Button{
   //on ImageLayer, need pointer listener. Should call whatever the button does.
   ImageLayer buttonImage;
   private Button(){}
+  //Buttons are not tied to a specific Level.
   public static Button make(AidsAttack game, float xPos, float yPos, String label){
     Button b = new Button();
     b.game = game;

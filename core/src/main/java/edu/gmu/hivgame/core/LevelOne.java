@@ -41,7 +41,6 @@ public class LevelOne extends Level{
   boolean attractingVirus;
   Virus theVirus;
   Cell theCell;
-  //Antibody[] antibodies;
   LinkedList<Antibody> antibodiesLL;
 
   Vec2 virusScreenTarget = new Vec2();
@@ -86,13 +85,6 @@ public class LevelOne extends Level{
 
     // Random to distribute Antibodies on screen
     Random r = new Random(12345);
-    /*antibodies = new Antibody[6];
-    for(int i=0; i<antibodies.length; i++){
-      float x = r.nextFloat();
-      float y = r.nextFloat(); 
-      Antibody a = Antibody.make(this.game, this, x*50, y*50, .2f);
-      antibodies[i] = a;
-    }*/
     populateAntibodies(5);
 
     // Hook up pointer listener to control Virus
@@ -157,12 +149,7 @@ public class LevelOne extends Level{
     //FIXME: This is dangerous! May cause thrown exceptions if any method attempts to remove a layer from
     //    a groupLayer after doing this.
     graphics().rootLayer().destroyAll();
-    //game.currentLevel = game.levels[1];
-    //game.currentLevel.initLevel(camera);
-    //camera.reset();
   }
-
-  //World physicsWorld(){ return this.m_world; }
 
   String levelName() {
     return "Level One";
@@ -185,9 +172,6 @@ public class LevelOne extends Level{
         camera.screenYToPhysY(virusScreenTarget.y));
       theVirus.attractTowards(virusPhysTarget);
     }
-    /*for(int i=0; i<antibodies.length; i++){
-      antibodies[i].update(delta);
-    }*/
     if(antibodiesLL != null){
       ListIterator<Antibody> itr = antibodiesLL.listIterator(0);
       while(itr.hasNext()){
@@ -233,9 +217,6 @@ public class LevelOne extends Level{
     if(!gameOver && !success){
       theVirus.paint(alpha);
       theCell.paint(alpha);
-      /*for(int i=0; i<antibodies.length; i++){
-        antibodies[i].paint(alpha);
-      }*/
       if(antibodiesLL != null){
         ListIterator<Antibody> itr = antibodiesLL.listIterator(0);
         while(itr.hasNext()){

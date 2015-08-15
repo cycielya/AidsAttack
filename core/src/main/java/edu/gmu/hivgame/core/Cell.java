@@ -31,7 +31,7 @@ import playn.core.Font;
 import playn.core.util.TextBlock;
 
 //This is the target of the first level.
-//When the virus hits it, Congratulations message should display
+//When the virus hits it, game moves to second level.
 //When hit by Antibody, they should bounce off each other.
 public class Cell implements CollisionHandler{
   // for calculating interpolation
@@ -54,13 +54,14 @@ public class Cell implements CollisionHandler{
     c.virusContact = false;
     c.game = game;
     c.level = (LevelOne) level;
-    c.initPhysicsBody(game.physicsWorld(), x, y, ang);
+    c.initPhysicsBody(level.physicsWorld(), x, y, ang);
     c.drawCellImage();
     c.level.addLayer(c.myLayer);
     c.prevX = c.x(); c.prevY = c.y(); c.prevA = c.ang();
     return c;
   }
-  public static Cell make(AidsAttack game, float x, float y, float ang){
+  //Deprecated method: see make(...) method above.
+  /*public static Cell make(AidsAttack game, float x, float y, float ang){
     Cell c = new Cell();
     c.virusContact = false;
     c.game = game;
@@ -69,7 +70,7 @@ public class Cell implements CollisionHandler{
     c.level.addLayer(c.myLayer);
     c.prevX = c.x(); c.prevY = c.y(); c.prevA = c.ang();
     return c;
-  }
+  }*/
 
   void initPhysicsBody(World world, float x, float y, float angle){
     BodyDef bodyDef = new BodyDef();
@@ -134,7 +135,7 @@ public class Cell implements CollisionHandler{
     myLayer.setTranslation(x, y);
     myLayer.setRotation(a);
 
-    float angle = (game.time() + game.UPDATE_RATE*alpha) * (float) Math.PI / 1000;
+    //float angle = (game.time() + game.UPDATE_RATE*alpha) * (float) Math.PI / 1000;
   }
 
   public void update(int delta){
@@ -149,13 +150,13 @@ public class Cell implements CollisionHandler{
     this.level.physicsWorld().destroyBody(this.body);
   }
 
+  //virusContact may not need to be tracked.
+  //TODO: Possibly remove this variable and any references to it.
   boolean virusContact = false;
   public void handleCollision(Fixture me, Fixture other){
     if(other.m_userData instanceof Virus && !virusContact){
       virusContact = true;
       Virus v = (Virus) other.m_userData;
-      //System.out.println("Collided with virus!");
-      //game.successLevelOne();
     }
   }      
 }

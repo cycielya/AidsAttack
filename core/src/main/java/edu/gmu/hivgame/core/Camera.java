@@ -46,7 +46,6 @@ public class Camera{
     tXGoal = 0.0f;
     tYGoal = 0.0f;
     zoomingIn = zoomingOut = false;
-    //setWorldScale();
   }
   public float physXToScreenX(float physX){
     return (physX*screenUnitPerPhysUnit) + translationX;
@@ -83,24 +82,6 @@ public class Camera{
     tYGoal +=tGoalStep;
   }
   public void updateTranslation(){
-    /*float virusXFromCenter = physXToScreenX(game.theVirus.x()) - game.getCenterX();
-    float virusYFromCenter = physYToScreenY(game.theVirus.y()) - game.getCenterY();
-    if(virusXFromCenter > game.getCenterX()){
-      System.out.println("Translating Left!");
-      translateLeft();
-    }
-    else if(virusXFromCenter < game.getCenterX()){
-      System.out.println("Translating Right!");
-      translateRight();
-    }
-    if(virusYFromCenter > game.getCenterY()){
-      System.out.println("Translating Down!");
-      translateDown();
-    }
-    else if(virusYFromCenter < game.getCenterY()){
-      System.out.println("Translating Up!");
-      translateUp();
-    }*/
     float xDiff = Math.abs(tXGoal - translationX);
     if(xDiff > tStep){
       if(translationX < tXGoal){
@@ -119,8 +100,6 @@ public class Camera{
         translationY -= tStep;
       }
     }
-    //game.currentLevel.worldLayer.setTranslation(translationX, translationY);
-    //game.worldLayer.transform();
   }
   public void updateZoom(){
     if(zoomingIn){
@@ -139,7 +118,6 @@ public class Camera{
       }
     }
     setWorldScale();
-    //game.worldLayer.transform();
   }
   public void update(){
     updateZoom();

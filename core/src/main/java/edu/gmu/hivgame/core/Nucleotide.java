@@ -66,11 +66,6 @@ public class Nucleotide implements CollisionHandler{
     bodyDef.angularDamping = 1.0f;
     bodyDef.linearDamping = 1.0f;
     Body body = world.createBody(bodyDef);
-    //body.setSleepingAllowed(false);
-    // NOTE: true sets body to asleep, false sets body to awake
-    // Not very intuitive, so be aware that it's backwards!
-    //body.setAwake(true);
-    //movable = false;
 
     PolygonShape polygonShape = new PolygonShape();
     polygonShape.setAsBox(width/2f, height/2f);
@@ -124,7 +119,6 @@ public class Nucleotide implements CollisionHandler{
         if(mouseJoint == null){
           return;
         }
-        //System.out.println("The number of joints is: "+level.physicsWorld().getJointCount());
         Vec2 pointerLocation = new Vec2(event.x(), event.y());
         Vec2 physLocation = new Vec2(level.camera.screenXToPhysX(pointerLocation.x),
                                      level.camera.screenYToPhysY(pointerLocation.y));
@@ -137,7 +131,6 @@ public class Nucleotide implements CollisionHandler{
         }
         level.physicsWorld().destroyJoint(mouseJoint);
         mouseJoint = null;
-        //body.setLinearVelocity(new Vec2(0f,0f));
       }
     });
   }

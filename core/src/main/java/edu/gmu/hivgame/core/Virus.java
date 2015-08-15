@@ -58,18 +58,6 @@ public class Virus implements CollisionHandler {
     v.prevX = v.x(); v.prevY = v.y(); v.prevA = v.ang();
     return v;
   }
-  public static Virus make(AidsAttack game, float x, float y, float ang){
-    Virus v = new Virus();
-    v.game = game;
-    v.cellContact = false;
-    v.initPhysicsBody(game.physicsWorld(), x, y, ang);
-    v.addVirusLayer();
-    /*game.addLayer(v.myLayer);
-    game.addLayer(v.myDebugLayer);
-    game.addLayer(v.myHitCountLayer);*/
-    v.prevX = v.x(); v.prevY = v.y(); v.prevA = v.ang();
-    return v;
-  }
 
   public Body body(){ return this.body; }
   public Vec2 position(){ return this.body().getPosition(); }
@@ -235,7 +223,6 @@ public class Virus implements CollisionHandler {
 
     myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
-    //System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
     myLayer.setScale(getWidth()/imageSize,getHeight()/imageSize);
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
@@ -252,17 +239,9 @@ public class Virus implements CollisionHandler {
       	myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
         scaleX = (getWidth()  * game.camera.screenUnitPerPhysUnit) / image.width();
         scaleY = (getHeight() * game.camera.screenUnitPerPhysUnit) / image.height();
-       	// System.out.printf("scaleX: %f\nscaleY: %f",scaleX,scaleY);
   	    myLayer.setScale(scaleX,scaleY);
   	    myLayer.setTranslation(x(), y());
   	    myLayer.setRotation(ang());
-
-        // // since the image is loaded, we can use its width and height
-        // layer.setOrigin(image.width() / 2f, image.height() / 2f);
-        // layer.setScale(getWidth() / image.width(), getHeight() / image.height());
-        // layer.setTranslation(x, y);
-        // layer.setRotation(angle);
-        // initPostLoad(peaWorld);
       }
 
       @Override
@@ -336,7 +315,6 @@ public class Virus implements CollisionHandler {
     if(length > minLength){
       force.mulLocal(forceScale);
     }
-    // body().applyForceToCenter(force);
     Vec2 cv = this.closestVertex(target);
     body().applyForce(force,cv);
   }
@@ -363,12 +341,6 @@ public class Virus implements CollisionHandler {
     }
     //makes hit counter travel with the virus
     myHitCountLayer.setTranslation(x,y);
-
-    // float scale = (float) 0.1f;
-    // myLayer.transform().setUniformScale(scale);    
-    // float scale = 1.0f; // + 0.25f*((float) Math.sin(angle));
-    // myLayer.setScale(scale,scale);
-    // myLayer.transform().setUniformScale(scale);    
   }
 
   public void update(int delta) {

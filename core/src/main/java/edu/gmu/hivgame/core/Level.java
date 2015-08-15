@@ -48,17 +48,6 @@ public abstract class Level{
     graphics().rootLayer().addAt(worldLayer,0f,0f);
     worldLayer.setDepth(3f);
 
-    /*CanvasImage testImage = graphics().createImage(200,200);
-    Canvas testCanvas = testImage.canvas();
-    testCanvas.setFillColor(0xff050505);
-    testCanvas.drawText("Testing, testing, 1,2,3.",10,100);
-    ImageLayer welcomeLayer = graphics().createImageLayer(testImage);
-    welcomeLayer.setDepth(4f);
-    welcomeLayer.setScale(1f,1f);
-    graphics().rootLayer().addAt(welcomeLayer, 200f, 200f);*/
-
-    //worldLayer.addAt(welcomeLayer, 200f, 200f);
-
     // create the physics world
     Vec2 gravity = new Vec2(0.0f, 0.0f);
     m_world = new World(gravity);

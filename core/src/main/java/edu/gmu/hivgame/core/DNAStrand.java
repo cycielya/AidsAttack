@@ -25,10 +25,6 @@ public class DNAStrand{
   public static DNAStrand make(AidsAttack game, Level level, float x, float y, int length){
     DNAStrand s = new DNAStrand(game, level);
     BodyDef bodyDef = new BodyDef();
-    //Nucleotide n = Nucleotide.make(game,level,Nucleobase.valueOf("C"),x, y, 0f);
-    //Nucleotide n2 = Nucleotide.make(game,level,Nucleobase.valueOf("T"),x+1.1f, y, 0f);
-    //s.addLast(n);
-    //s.addLast(n2);
     s.populateStrand(length, x, y);
     return s;
   }

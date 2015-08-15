@@ -47,16 +47,6 @@ public class Antibody implements CollisionHandler{
     a.destroyed = false;
     return a;
   }
-  public static Antibody make(AidsAttack game, float x, float y, float ang){
-    Antibody a = new Antibody();
-    a.game = game;
-    a.initPhysicsBody(game.physicsWorld(), x, y, ang);
-    a.drawAntibodyImage();
-    //game.addLayer(a.myLayer);
-    a.prevX = a.x(); a.prevY = a.y(); a.prevA = a.ang();
-    a.attracted = false;
-    return a;
-  } 
 
   public Body body(){ return this.body; }
   public Vec2 position(){ return this.body().getPosition(); }
@@ -86,7 +76,6 @@ public class Antibody implements CollisionHandler{
     CircleShape s = (CircleShape) fix.getShape();
 
     CanvasImage image = graphics().createImage(100, 100);
-
     Canvas canvas = image.canvas();
     canvas.setStrokeColor(0xff000000);
     canvas.fillCircle(50f,50f,50f);
@@ -94,7 +83,6 @@ public class Antibody implements CollisionHandler{
     this.myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
     myLayer.setScale(getWidth()/image.width(),getHeight()/image.height());
-
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
   }
@@ -123,6 +111,7 @@ public class Antibody implements CollisionHandler{
   }
 
 
+  //Used for attracting toward the Virus when it moves close enough.
   public void attractTowards(Vec2 target){
     Vec2 force = target.sub(position());
     float length = force.normalize();
@@ -158,13 +147,13 @@ public class Antibody implements CollisionHandler{
       Virus v = (Virus) other.m_userData;
       this.attractTowards(new Vec2(v.x(), v.y()));
     }
-  }      
+  }
 
   public void destroy(){
     // remove graphics
     this.level.removeLayer(this.myLayer);
     // remove physics body
-    this.game.physicsWorld().destroyBody(this.body);
+    this.level.physicsWorld().destroyBody(this.body);
     this.destroyed = true;
   }
 }

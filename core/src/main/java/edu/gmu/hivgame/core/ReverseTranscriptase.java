@@ -118,7 +118,6 @@ public class ReverseTranscriptase implements CollisionHandler {
         if(mouseJoint == null){
           return;
         }
-        //System.out.println("The number of joints is: "+level.physicsWorld().getJointCount());
         Vec2 pointerLocation = new Vec2(event.x(), event.y());
         Vec2 physLocation = new Vec2(level.camera.screenXToPhysX(pointerLocation.x),
                                      level.camera.screenYToPhysY(pointerLocation.y));

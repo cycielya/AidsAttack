@@ -56,7 +56,6 @@ public class LevelTwo extends Level{
     canvas.drawText("Level Two!",10,100);
     ImageLayer welcomeLayer = graphics().createImageLayer(image);
     welcomeLayer.setDepth(7f);
-    //worldLayer.add(welcomeLayer);
     graphics().rootLayer().add(welcomeLayer);
     System.out.println("welcomelayer added");
     System.out.println("RootLayer size is: "+graphics().rootLayer().size());

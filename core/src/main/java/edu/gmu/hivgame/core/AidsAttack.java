@@ -39,14 +39,14 @@ public class AidsAttack extends Game.Default {
   private static int height = 18;
   public static final int UPDATE_RATE = 33; // call update every 33ms (30 times per second)
 
-  // world, worldLayer and entityLayer no longer in use by AidsAttack. See Layer class.
   GroupLayer buttonLayer; // contains buttons which do not scale with image
   public Camera camera;
   Level[] levels;
   Level currentLevel;
   private boolean gamePaused = false;
 
-  World physicsWorld(){ return this.currentLevel.physicsWorld(); }
+  //Deprecated method. See Level.physicsWorld()
+  //World physicsWorld(){ return this.currentLevel.physicsWorld(); }
 
   public void addButton(Layer l){
     this.buttonLayer.add(l);
@@ -55,8 +55,10 @@ public class AidsAttack extends Game.Default {
     this.buttonLayer.remove(l);
   }
 
+  //resumeButton only appears when game is paused
   Button resumeButton;
   public void pauseGame(){
+    //No duplicate effects if game is already paused.
     if(this.gamePaused == true){
       return;
     }
@@ -84,6 +86,7 @@ public class AidsAttack extends Game.Default {
     super(UPDATE_RATE); 
   }
 
+  //width and height of game window do not change throughout gameplay.
   public static float getCenterX(){
     return width/2f;
   }
@@ -91,12 +94,16 @@ public class AidsAttack extends Game.Default {
     return height/2f;
   }
 
+  //Retaining a level list allows for smooth transition between levels of gameplay.
   public void populateLevelList(){
+    //size anticipates a third level of gameplay, not yet implemented.
     levels = new Level[3];
     levels[0] = LevelOne.make(this);
     levels[1] = LevelTwo.make(this);
   }
 
+  //This method is only ever called once, when the program first starts up.
+  //specific init methods (UI, KeyControls, Level) may be called multiple times.
   @Override
   public void init(){
     populateLevelList();
@@ -107,7 +114,6 @@ public class AidsAttack extends Game.Default {
     initKeyControls();
     // adds buttons
     initUI();
-    //resumeGame();
   }
   public void initKeyControls(){
     //hook up key listener, for global scaling in-game
@@ -123,6 +129,13 @@ public class AidsAttack extends Game.Default {
           camera.zoomOut();
         }
         //Translation keys: a is left, s is down, w is up, d is right.
+        /* Strange behavior as of introduction of Pause functionality:
+         * Will not zoom or translate when Paused, which is intentional. However, after game
+         * is resumed, if translation input was registered during pause, will then begin
+         * translating view to match that input. Zooming input registered during pause is ignored
+         * from buttons, but has similar behavior to translation if zoom was inputted through
+         * keys instead.
+        */
         else if(event.key() == Key.valueOf("A")){
           camera.translateRight();
         }
@@ -227,29 +240,14 @@ public class AidsAttack extends Game.Default {
     gameOverLayer.setDepth(6);
     graphics().rootLayer().add(gameOverLayer);
     // pointer listener should be null so mouse clicks don't continue to move virus.
+    // Edit 8/15/15: nullifying pointer listener may not be necessary, as Virus is controlled in LevelOne.
+    //    TODO: Confirmation needed.
     pointer().setListener(null);
     keyboard().setListener(null);
     gameOver = true;
     currentLevel.gameOver = true;
   }
 
-  // method to transition from LevelOne to LevelTwo.
-  // May abstract further, to a success() method in LevelOne that does most of the cleanup.
-  public void successLevelOne(){
-    pointer().setListener(null);
-    keyboard().setListener(null);
-    currentLevel.success = true;
-    System.out.println("Current level is: "+currentLevel);
-    currentLevel.endLevel();
-    graphics().rootLayer().destroyAll();
-    //levels[1] = LevelTwo.make(this);
-    currentLevel = levels[1];
-    System.out.println("Current level is: "+currentLevel);
-    currentLevel.initLevel(camera);
-    camera.reset();
-    // adds the buttons back in
-    initUI();
-  }
   public void successCurrentLevel(){
     currentLevel.endLevel();
     currentLevel.successLevel();
@@ -265,16 +263,12 @@ public class AidsAttack extends Game.Default {
     initUI();
   }
 
-  //Vec2 virusScreenTarget = new Vec2();
-  //boolean attractingVirus = false;
-  float minLength = 1f;
-  float forceScale = 10f;
+  //float minLength = 1f;
+  //float forceScale = 10f;
 
   int time = 0;
   public int time(){ return this.time; }
   Random gravity = new Random(54321);
-
-  //float zoomStep = 0.1f;
 
   @Override
   public void update(int delta) {
@@ -284,8 +278,6 @@ public class AidsAttack extends Game.Default {
       camera.update();
       currentLevel.update(delta, time);
     }
-    // world is no longer updated in AidsAttack
-    //world.step(0.033f, 10, 10);
   }
 
   @Override
