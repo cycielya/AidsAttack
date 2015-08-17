@@ -1,6 +1,7 @@
 package edu.gmu.hivgame.core;
 
 import static playn.core.PlayN.*;
+import java.util.Random;
 
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -17,6 +18,7 @@ import org.jbox2d.dynamics.joints.RopeJointDef;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
+
 import playn.core.ImageLayer;
 import playn.core.Image;
 import playn.core.CanvasImage;
@@ -232,6 +234,23 @@ enum Nucleobase{
   }
   public static String toString(Nucleobase n){
     return n.name;
+  }
+  public static Nucleobase randomRNABase(){
+    Random r = new Random();
+    //values().length -1 to include only four options instead of five.
+    //+1 at end to shift option range from 0-3 to 1-4.
+    int baseIndex = Math.abs(r.nextInt()) % (Nucleobase.values().length-1) + 1;
+    return Nucleobase.values()[baseIndex];
+  }
+  public static Nucleobase randomDNABase(){
+    Random r = new Random();
+    int baseIndex = Math.abs(r.nextInt()) % (Nucleobase.values().length-1);
+    return Nucleobase.values()[baseIndex];
+  }
+  public static Nucleobase randomBase(){
+    Random r = new Random();
+    int baseIndex = Math.abs(r.nextInt()) % Nucleobase.values().length;
+    return Nucleobase.values()[baseIndex];
   }
   // returns true if a given base, other, would naturally pair with this base.
   public boolean pairsWith(Nucleobase other){

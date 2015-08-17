@@ -41,6 +41,8 @@ public class LevelOne extends Level{
   boolean attractingVirus;
   Virus theVirus;
   Cell theCell;
+  //Main motivation for Linked List is to remove complications of destroyed
+  //antibodies when traversing the list.
   LinkedList<Antibody> antibodiesLL;
 
   Vec2 virusScreenTarget = new Vec2();

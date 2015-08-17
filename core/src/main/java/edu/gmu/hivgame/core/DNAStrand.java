@@ -30,14 +30,10 @@ public class DNAStrand{
   }
 
   private void populateStrand(int length, float x, float y){
-    Random r = new Random();
-    Nucleobase [] bases = Nucleobase.values();
     int i;
     float separationDist = 1.5f;
-    int baseChoice;
     for(i=0; i<length; i++){
-      baseChoice = Math.abs(r.nextInt()) % bases.length;
-      Nucleotide n = Nucleotide.make(this.game, this.level, bases[baseChoice], x+separationDist*i, y, 0f);
+      Nucleotide n = Nucleotide.make(this.game, this.level, Nucleobase.randomDNABase(), x+separationDist*i, y, 0f);
       this.addLast(n);
     }
   }

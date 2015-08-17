@@ -34,6 +34,7 @@ import playn.core.*;
 public class LevelTwo extends Level{
   ReverseTranscriptase theRT;
   DNAStrand theDNA;
+  CellInterior theCI;
 
   static LevelTwo make(AidsAttack game){
     LevelTwo lt = new LevelTwo();
@@ -68,6 +69,8 @@ public class LevelTwo extends Level{
     //make a DNAStrand
     theDNA = DNAStrand.make(game, this, 10f, 20f, 5);
 
+    this.theCI = CellInterior.make(game, this, 20);
+
   }
 
   public void testStrandEnds(Nucleotide n){
@@ -79,6 +82,7 @@ public class LevelTwo extends Level{
   void updateLevel(int delta, int time){
     theRT.update(delta);
     theDNA.update(delta);
+    theCI.update(delta);
     Contact contact = m_world.getContactList();
     while(contact != null){
       if(contact.isTouching()){
@@ -109,6 +113,7 @@ public class LevelTwo extends Level{
     if(!gameOver && !success){
       theRT.paint(alpha);
       theDNA.paint(alpha);
+      theCI.paint(alpha);
     }
   }
   String levelName(){
