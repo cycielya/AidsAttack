@@ -19,10 +19,12 @@ public class DoubleHelix{
 
   public void setStrandA(DNAStrand strandA){
     this.strandA = strandA;
+    this.strandA.setDoubleHelix(this);
     this.newStrand = true;
   }
   public void setStrandB(DNAStrand strandB){
     this.strandB = strandB;
+    this.strandB.setDoubleHelix(this);
     this.newStrand = true;
   }
   public DNAStrand getStrandA(){
@@ -32,6 +34,7 @@ public class DoubleHelix{
     return this.strandB;
   }
 
+  //intended for if generating a double helix from two pre-populated DNAStrands.
   private void joinStrands(){
     if(strandA == null || strandB == null){
       return;

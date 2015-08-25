@@ -45,6 +45,7 @@ public class Nucleotide implements CollisionHandler{
   //private boolean movable;
   private Body groundBody; // used for MouseJoint, does not have relevance to anything else
   private MouseJoint mouseJoint; // to make a nucleotide player-controllable
+  DNAStrand strand;
 
   private Nucleotide(){}
   public static Nucleotide make(AidsAttack game, Level level, Nucleobase nBase, float x, float y, float ang){
@@ -58,6 +59,7 @@ public class Nucleotide implements CollisionHandler{
     n.level.addLayer(n.myLayer);
     BodyDef groundBodyDef = new BodyDef();
     n.groundBody = level.physicsWorld().createBody(groundBodyDef); // groundBody only relevant for MouseJoint
+    n.strand = null;
     return n;
   }
   private void initPhysicsBody(World world, float x, float y, float ang){
@@ -152,6 +154,16 @@ public class Nucleotide implements CollisionHandler{
     def.localAnchorB.set(0f-other.getWidth()/2f, 0f+other.getHeight()/2f); //position at lower left corner
     RopeJoint rj2 = (RopeJoint) this.level.physicsWorld().createJoint(def);
   }
+  public boolean inStrand(){
+    return (this.strand != null)? true : false;
+  }
+  //If nucleotide not in strand, returns null
+  public DNAStrand getStrand(){
+    return this.strand;
+  }
+  public void setStrand(DNAStrand strand){
+    this.strand = strand;
+  }
 
   public boolean pairsWith(Nucleotide other){
     return this.nBase.pairsWith(other.nBase);
@@ -209,58 +221,5 @@ public class Nucleotide implements CollisionHandler{
     if(me == this.myBodyFixture && other.m_userData instanceof ReverseTranscriptase){
       System.out.println("Hit the RT!");
     }
-  }
-}
-
-/* Each nucleotide contains one nucleobase, which determines what other
- * nucleotides it can pair with when forming a double helix. 
- * Will be important during base-pairing puzzle portion of game.
- * NOTE: C,G,A and T occur in DNA, whereas C,G,A and U occur in RNA.
-*/
-enum Nucleobase{
-  T ("thymine"),
-  C ("cytosine"),
-  G ("guanine"),
-  A ("adenine"),
-  U ("uracil");
-  private final String name;
-  private static final Nucleobase[][] pairsWith = {
-    {C, G},
-    {A, T},
-    {A, U}
-  };
-  Nucleobase(String name){
-    this.name = name;
-  }
-  public static String toString(Nucleobase n){
-    return n.name;
-  }
-  public static Nucleobase randomRNABase(){
-    Random r = new Random();
-    //values().length -1 to include only four options instead of five.
-    //+1 at end to shift option range from 0-3 to 1-4.
-    int baseIndex = Math.abs(r.nextInt()) % (Nucleobase.values().length-1) + 1;
-    return Nucleobase.values()[baseIndex];
-  }
-  public static Nucleobase randomDNABase(){
-    Random r = new Random();
-    int baseIndex = Math.abs(r.nextInt()) % (Nucleobase.values().length-1);
-    return Nucleobase.values()[baseIndex];
-  }
-  public static Nucleobase randomBase(){
-    Random r = new Random();
-    int baseIndex = Math.abs(r.nextInt()) % Nucleobase.values().length;
-    return Nucleobase.values()[baseIndex];
-  }
-  // returns true if a given base, other, would naturally pair with this base.
-  public boolean pairsWith(Nucleobase other){
-    int i;
-    for(i=0; i<pairsWith.length; i++){
-      if( (this == pairsWith[i][0] && other == pairsWith[i][1]) ||
-          (other == pairsWith[i][0] && this == pairsWith[i][1]) ){
-        return true;
-      }
-    }
-    return false;
   }
 }

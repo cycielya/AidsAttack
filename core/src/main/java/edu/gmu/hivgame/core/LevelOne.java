@@ -94,7 +94,7 @@ public class LevelOne extends Level{
 	    @Override
       public void onPointerStart(Pointer.Event event) {
         Point p = new Point(event.x(), event.y());
-        System.out.printf("Point p is at: %f, %f.\n",p.x(), p.y());
+        System.out.println("Point p is at: "+p.x()+","+p.y()+".");
         Layer hit = game.buttonLayer.hitTest(p);
         if(hit != null){
           System.out.println("Hit a button!");
@@ -116,7 +116,7 @@ public class LevelOne extends Level{
       @Override
       public void onPointerDrag(Pointer.Event event) {
         Point p = new Point(event.x(), event.y());
-        System.out.printf("Point p is at: %f, %f.\n",p.x(), p.y());
+        System.out.println("Point p is at: "+p.x()+","+p.y()+".");
         Layer hit = game.buttonLayer.hitTest(p);
         if(hit != null){
           System.out.println("Hit a button!");
@@ -161,7 +161,7 @@ public class LevelOne extends Level{
       float r1 = (gravity.nextFloat() - 0.5f)*5f;
       float r2 = (gravity.nextFloat() - 0.5f)*5f;
       Vec2 ng = new Vec2(r1,r2);
-      System.out.printf("New gravity is: %f, %f\n",r1,r2);
+      System.out.println("New gravity is: "+r1+","+r2+".");
       m_world.setGravity(ng);
     }
 

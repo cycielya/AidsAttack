@@ -16,6 +16,7 @@ public class DNAStrand{
   private AidsAttack game;
   private LevelTwo level;
   private LinkedList<Nucleotide> strand;
+  DoubleHelix dh;
 
   private DNAStrand(AidsAttack game, Level level){
     this.game = game;
@@ -26,7 +27,18 @@ public class DNAStrand{
     DNAStrand s = new DNAStrand(game, level);
     BodyDef bodyDef = new BodyDef();
     s.populateStrand(length, x, y);
+    s.dh = null;
     return s;
+  }
+  public boolean inDoubleHelix(){
+    return (this.dh != null)? true : false;
+  }
+  //returns null if dh is null.
+  public DoubleHelix getDoubleHelix(){
+    return this.dh;
+  }
+  public void setDoubleHelix(DoubleHelix dh){
+    this.dh = dh;
   }
 
   private void populateStrand(int length, float x, float y){
@@ -37,12 +49,16 @@ public class DNAStrand{
       this.addLast(n);
     }
   }
+  public int size(){
+    return this.strand.size();
+  }
 
   private void addLast(Nucleotide n){
     if(strand.size() > 0){
       Nucleotide prev = strand.getLast();
       prev.strandLink(n);
     }
+    n.setStrand(this);
     strand.addLast(n);
   }
 
