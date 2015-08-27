@@ -52,6 +52,20 @@ public class DNAStrand{
   public int size(){
     return this.strand.size();
   }
+  public Nucleotide getFirst(){
+    if(this.strand.size() > 0){
+      return this.strand.getFirst();
+    }
+    else{
+      return null;
+    }
+  }
+  public Nucleotide get(int index){
+    if(index < 0 || index >= this.strand.size()){
+      return null;
+    }
+    return this.strand.get(index);
+  }
 
   private void addLast(Nucleotide n){
     if(strand.size() > 0){

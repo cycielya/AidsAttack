@@ -22,26 +22,26 @@ class Global {
     new ContactListener(){
       // Called when two fixtures begin to touch
       public void beginContact(Contact contact){
-	Object a = contact.getFixtureA().getUserData();
-	Object b = contact.getFixtureB().getUserData();
-	if(a!=null && a instanceof ContactListener){
-	  ((ContactListener) a).beginContact(contact);
-	}
-	else if(b!=null && b instanceof ContactListener){
-	  ((ContactListener) b).beginContact(contact);
-	}
+        Object a = contact.getFixtureA().getUserData();
+        Object b = contact.getFixtureB().getUserData();
+        if(a!=null && a instanceof ContactListener){
+          ((ContactListener) a).beginContact(contact);
+        }
+        else if(b!=null && b instanceof ContactListener){
+          ((ContactListener) b).beginContact(contact);
+        }
       }
 
       // Called when two fixtures cease to touch.
       public void endContact(Contact contact){
-	Object a = contact.getFixtureA().getUserData();
-	Object b = contact.getFixtureB().getUserData();
-	if(a!=null && a instanceof ContactListener){
-	  ((ContactListener) a).endContact(contact);
-	}
-	else if(b!=null && b instanceof ContactListener){
-	  ((ContactListener) b).endContact(contact);
-	}
+        Object a = contact.getFixtureA().getUserData();
+        Object b = contact.getFixtureB().getUserData();
+        if(a!=null && a instanceof ContactListener){
+          ((ContactListener) a).endContact(contact);
+        }
+        else if(b!=null && b instanceof ContactListener){
+          ((ContactListener) b).endContact(contact);
+        }
       }
 
       public void postSolve(Contact contact, ContactImpulse impulse){}

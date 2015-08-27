@@ -72,7 +72,7 @@ public class ReverseTranscriptase implements CollisionHandler {
     bodyDef.linearDamping = 1.0f;
 
     this.body = world.createBody(bodyDef);
-    body.setSleepingAllowed(false);
+    //body.setSleepingAllowed(false);
 
     CircleShape shape = new CircleShape();
     shape.m_radius = radius;
@@ -80,11 +80,13 @@ public class ReverseTranscriptase implements CollisionHandler {
 
     FixtureDef fd = new FixtureDef();
     fd.shape = shape;
+    fd.isSensor = true;
     fd.friction = 0.1f;
     fd.restitution = 0.4f;
     fd.density = 1.0f;
     this.myBodyFixture = body.createFixture(fd);
     this.myBodyFixture.m_userData = this;
+
   }
 
   private void drawRTImage(){
@@ -137,9 +139,15 @@ public class ReverseTranscriptase implements CollisionHandler {
   public void handleCollision(Fixture me, Fixture other){
     System.out.println("Ran into something!");
     if(me == this.myBodyFixture && other.m_userData instanceof Nucleotide){
-      System.out.println("Wow such Nucleotide.");
       Nucleotide n = (Nucleotide) other.m_userData;
-      level.testStrandEnds(n);
+      if(n.inStrand()){
+        DNAStrand strand = n.getStrand();
+        if(strand.inDoubleHelix()){
+          DoubleHelix dh = strand.getDoubleHelix();
+          if(n.equals(dh.getUNA())){
+          }
+        }
+      }
     }
     else{
       System.out.println("Contacted: "+other.m_userData.toString());
