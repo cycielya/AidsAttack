@@ -112,4 +112,24 @@ public class DNAStrand{
       iterator.next().paint(alpha);
     }
   }
+  //TODO: React if no assumptions are violated.
+  public void alert(Nucleotide mine, Nucleotide other){
+    //Assumptions:
+    //  Neither argument is null.
+    //  Mine is some Nucleotide in this.
+    //  other is some Nucleotide not in a strand.
+    //Check assumptions:
+    if(mine == null || other == null ||
+       !( mine.inStrand() && this.equals(mine.getStrand()) ) ||
+       other.inStrand()
+       ){
+        System.out.println("Nucleotide, why you lyin' to me?");
+        return;
+    }
+    System.out.println("I believe you, Nucleotide.");
+    if(this.inDoubleHelix()){
+      System.out.println("I'm in a dh! I'll let them know.");
+      //Reaction: Propagate alert up to DoubleHelix.
+    }
+  }
 }

@@ -35,7 +35,7 @@ public class Nucleotide implements CollisionHandler{
   AidsAttack game;
   private float width = 1f;
   private float height = 1f;
-  private Nucleobase nBase; // see enum Nucleobase definition below
+  private Nucleobase nBase; // see enum Nucleobase definition in Nucleobase.java
   private Body body;
   private Fixture myBodyFixture;
   private ImageLayer myLayer;
@@ -116,6 +116,7 @@ public class Nucleotide implements CollisionHandler{
         def.target.set(physLocation);
         def.maxForce = 1000f * body.getMass();
         mouseJoint = (MouseJoint) level.physicsWorld().createJoint(def);
+        //bodies are set awake when moving. is this necessary?
         body.setAwake(true);
       }
       @Override
@@ -180,7 +181,7 @@ public class Nucleotide implements CollisionHandler{
     }
   }
   public boolean isBasePaired(){
-    return (this.pair == null);
+    return (this.pair != null);
   }
   public float getWidth(){
     return this.width;
@@ -217,9 +218,23 @@ public class Nucleotide implements CollisionHandler{
     myLayer.setTranslation(x, y);
     myLayer.setRotation(a);
   }
+  //TODO: Manage collisions with other nucleotides. Should they bond?
   public void handleCollision(Fixture me, Fixture other){
-    if(me == this.myBodyFixture && other.m_userData instanceof ReverseTranscriptase){
+    if(me != this.myBodyFixture){
+      return;
+    }
+    if(other.m_userData instanceof ReverseTranscriptase){
       System.out.println("Hit the RT!");
+    }
+    else if (other.m_userData instanceof Nucleotide){
+      Nucleotide otherN = (Nucleotide) other.m_userData;
+      //here, check if otherN is in a strand
+      //if in a strand, do nothing.
+      //if free, then alert my strand with this and otherN, unless I'm already paired.
+      if(!otherN.inStrand() && this.inStrand() && !this.isBasePaired()){
+        this.strand.alert(this, otherN);
+        System.out.println("Hey strand! Found a straggler!");
+      }
     }
   }
 }

@@ -30,7 +30,8 @@ public class DoubleHelix{
     this.newStrand = true;
   }
   //returns true if uNA now holds a value, false if uNA is now null
-  //this is regardless of whether the previous uNA was correct or not.
+  //does not take into account previous values of uNA.
+  //uNA will always be considered to be in strandA.
   public boolean evalUNA(){
     if(this.strandA == null){
       this.uNA = null;
@@ -55,6 +56,7 @@ public class DoubleHelix{
       return false;
     }
   }
+  //TODO: When would I need this? Are these just arbitrary getters? Attempt to eliminate.
   public Nucleotide getUNA(){
     return this.uNA;
   }
@@ -64,8 +66,20 @@ public class DoubleHelix{
   public DNAStrand getStrandB(){
     return this.strandB;
   }
+  //Alert method to be used by DNAStrand when a Nucleotide in the strand hits a free nucleotide.
+  public void alert(Nucleotide mine, Nucleotide other){
+    //Assumption checking.
+    if( mine == null || other == null || other.inStrand() || this.getUNA() == null
+        || !this.getUNA().equals(mine) ){
+      System.out.println("Strand, why you lyin' to me now?");
+      return;
+    }
+    System.out.println("Cool! uNA found someone!");
+    //Now do the thing!
+  }
 
   //intended for if generating a double helix from two pre-populated DNAStrands.
+  //Not fully implemented because not needed yet.
   private void joinStrands(){
     if(strandA == null || strandB == null){
       return;

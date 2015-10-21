@@ -43,6 +43,7 @@ public class LevelOne extends Level{
   Cell theCell;
   //Main motivation for Linked List is to remove complications of destroyed
   //antibodies when traversing the list.
+  //May need to revisit this decision for increased performance/speed
   LinkedList<Antibody> antibodiesLL;
 
   Vec2 virusScreenTarget = new Vec2();
