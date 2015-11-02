@@ -33,7 +33,9 @@ import playn.core.*;
 //Level Two: Reverse Transcriptase
 public class LevelTwo extends Level{
   ReverseTranscriptase theRT;
-  DNAStrand theDNA;
+  DNAStrand viralRNA1;
+  DNAStrand viralRNA2;
+  DoubleHelix viralDH; //Initially only contains a single strand, which is the viralRNA.
   CellInterior theCI;
 
   static LevelTwo make(AidsAttack game){
@@ -67,21 +69,26 @@ public class LevelTwo extends Level{
     this.theRT = ReverseTranscriptase.make(game, this, 15f, 10f, 0f);
 
     //make a DNAStrand
-    theDNA = DNAStrand.make(game, this, 10f, 20f, 5);
+    this.viralRNA1 = DNAStrand.make(game, this, 10f, 20f, 5);
+    this.viralRNA2 = DNAStrand.make(game, this, 10f, 22f, 0);
+    this.viralDH = DoubleHelix.make(game, this, viralRNA1, viralRNA2);
+    //this.viralDH.setStrandA(viralRNA);
 
     this.theCI = CellInterior.make(game, this, 20);
 
   }
 
   public void testStrandEnds(Nucleotide n){
-    if(this.theDNA.compareFirst(n) || this.theDNA.compareLast(n)){
+    if(this.viralRNA1.compareFirst(n) || this.viralRNA1.compareLast(n)){
       System.out.println("Starting minigame!");
     }
   }
 
   void updateLevel(int delta, int time){
     theRT.update(delta);
-    theDNA.update(delta);
+    viralRNA1.update(delta);
+    viralRNA2.update(delta);
+    viralDH.update(delta);
     theCI.update(delta);
     Contact contact = m_world.getContactList();
     while(contact != null){
@@ -112,7 +119,9 @@ public class LevelTwo extends Level{
   void paint(float alpha){
     if(!gameOver && !success){
       theRT.paint(alpha);
-      theDNA.paint(alpha);
+      viralRNA1.paint(alpha);
+      viralRNA2.paint(alpha);
+      //no need to paint viralDH because no images associated with it
       theCI.paint(alpha);
     }
   }

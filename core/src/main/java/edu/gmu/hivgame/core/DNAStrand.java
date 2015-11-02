@@ -130,6 +130,7 @@ public class DNAStrand{
     if(this.inDoubleHelix()){
       System.out.println("I'm in a dh! I'll let them know.");
       //Reaction: Propagate alert up to DoubleHelix.
+      this.dh.alert(mine, other);
     }
   }
 }

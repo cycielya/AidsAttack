@@ -18,6 +18,16 @@ public class DoubleHelix{
     this.uNA = null;
     this.newStrand = false;
   }
+  public static DoubleHelix make(AidsAttack game, Level level){
+    DoubleHelix dh = new DoubleHelix(game, level);
+    return dh;
+  }
+  public static DoubleHelix make(AidsAttack game, Level level, DNAStrand strandA, DNAStrand strandB){
+    DoubleHelix dh = new DoubleHelix(game, level);
+    dh.setStrandA(strandA);
+    dh.setStrandB(strandB);
+    return dh;
+  }
 
   public void setStrandA(DNAStrand strandA){
     this.strandA = strandA;
@@ -56,6 +66,12 @@ public class DoubleHelix{
       return false;
     }
   }
+  //TODO: Implement method for adding nucleotide to the end of one strand
+  //  Must be able to base-pair with nucleotide on other strand, if necessary
+  //  Must establish physical links between base-paired nucleotides
+  //  Trust DNAStrand to establish physical links to adjacent nucleotides in the same strand
+  //  Update uNA.
+
   //TODO: When would I need this? Are these just arbitrary getters? Attempt to eliminate.
   public Nucleotide getUNA(){
     return this.uNA;
@@ -76,6 +92,11 @@ public class DoubleHelix{
     }
     System.out.println("Cool! uNA found someone!");
     //Now do the thing!
+    //Must base-pair other with mine.
+    mine.basePair(other);
+    //then add other to end of strandB
+    strandB.addNucleotide(other);
+    evalUNA();
   }
 
   //intended for if generating a double helix from two pre-populated DNAStrands.

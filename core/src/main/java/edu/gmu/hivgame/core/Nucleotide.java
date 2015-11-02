@@ -142,6 +142,7 @@ public class Nucleotide implements CollisionHandler{
 
   // other is the new Nucleotide being added to the strand.
   // visualize as this being last one in a DNA strand, and other being added to the end.
+  // TODO: create a version of this to link two paired nucleotides! Or edit basePair()
   public void strandLink(Nucleotide other){
     RopeJointDef def = new RopeJointDef();
     def.bodyA = this.body;
@@ -165,15 +166,31 @@ public class Nucleotide implements CollisionHandler{
   public void setStrand(DNAStrand strand){
     this.strand = strand;
   }
-
   public boolean pairsWith(Nucleotide other){
     return this.nBase.pairsWith(other.nBase);
   }
   //attempts to pair two Nucleotides. Returns true on successful pairing, false on wrong pair.
+  //does NOT create physics link between the nucleotides.
   public boolean basePair(Nucleotide other){
     this.pair = other;
     other.pair = this;
-    if(this.pairsWith(other)){
+    //Need to establish physical link between Nucleotides. Should be closer together than stranded Nucleotides.
+    RopeJointDef def = new RopeJointDef();
+    def.bodyA = this.body;
+    def.bodyB = other.body;
+    //positioning of ropejoints depends on this being in a strand, other being the free nucleotide
+    //places other below this, so may cause funky physics behavior immediately after connecting.
+    //TODO: figure out what to do if other is on wrong side of strand!
+    //note: sets at offset from body's origin, which is center on Nucleotide.
+    def.localAnchorA.set(0f-this.getWidth()/2f, 0f+this.getHeight()/2f); //position at lower left corner
+    def.localAnchorB.set(0f-other.getWidth()/2f, 0f-other.getHeight()/2f); //position at upper left corner
+    def.maxLength = .5f;
+    def.collideConnected = true;
+    RopeJoint rj = (RopeJoint) this.level.physicsWorld().createJoint(def);
+    def.localAnchorA.set(0f+this.getWidth()/2f, 0f+this.getHeight()/2f); //position at lower right corner
+    def.localAnchorB.set(0f+other.getWidth()/2f, 0f-other.getHeight()/2f); //position at upper right corner
+    RopeJoint rj2 = (RopeJoint) this.level.physicsWorld().createJoint(def);
+    if (this.pairsWith(other)){
       return true;
     }
     else{
