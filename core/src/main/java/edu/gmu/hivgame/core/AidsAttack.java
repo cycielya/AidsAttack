@@ -261,6 +261,7 @@ public class AidsAttack extends Game.Default {
     currentLevel.initLevel(camera);
     camera.reset();
     initUI();
+    initKeyControls();
   }
 
   //float minLength = 1f;

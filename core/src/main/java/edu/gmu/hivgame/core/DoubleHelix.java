@@ -87,13 +87,20 @@ public class DoubleHelix{
     //Assumption checking.
     if( mine == null || other == null || other.inStrand() || this.getUNA() == null
         || !this.getUNA().equals(mine) ){
-      System.out.println("Strand, why you lyin' to me now?");
+      //System.out.println("Strand, why you lyin' to me now?");
       return;
     }
     System.out.println("Cool! uNA found someone!");
     //Now do the thing!
     //Must base-pair other with mine.
-    mine.basePair(other);
+    boolean goodPair = mine.basePair(other);
+    if(goodPair){
+      correctMatches++;
+    }
+    else{
+      mismatches++;
+    }
+    System.out.println("Good matches: "+correctMatches+"\nMismatches: "+mismatches);
     //then add other to end of strandB
     strandB.addNucleotide(other);
     evalUNA();

@@ -1,0 +1,23 @@
+Design doc for getting nucleotides to pair into double strands
+
+- Nucleotide x collision with another nucleotide y:
+- Nucleotide.handleCollison() (from interface CollisionHandler)
+- x is in already in a DNAStrand and is responsible for grabbing y if
+  it is a free Nucleotide
+- y will do nothing
+- x Checks if y is free
+- x checks if x is in a strand
+- x checks if x is unpaired
+- Invoke DNAStrand.alert(x,y) for x's DNAStrand called S
+- In S.alert(x,y) double-check assumptions
+- S checks if it is in a DoubleHelix D and invokes D.alert(x,y)
+- D double-checks assumptions
+- D invokes x.basePair(y) which creates the physical connection
+(probably rope joints)
+- D checks for Nucleotides x and y matching, maintains count of
+  matched/mismatched Nucleotides
+- D adds y to the end of D.strandB; D.strandA is always the complete
+  strand with the active Nucleotide while D.strandB grows; creates
+  physical connection to another Nucleotide in strandB
+- D invokes evalUNA() to update which is the unpaired nucleotide in
+  D.strandA

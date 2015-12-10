@@ -68,7 +68,7 @@ public class LevelTwo extends Level{
     // This should create the image as well as the physics body
     this.theRT = ReverseTranscriptase.make(game, this, 15f, 10f, 0f);
 
-    //make a DNAStrand
+    //Do I need to make them actual fields? Or maybe just variables for this method?
     this.viralRNA1 = DNAStrand.make(game, this, 10f, 20f, 5);
     this.viralRNA2 = DNAStrand.make(game, this, 10f, 22f, 0);
     this.viralDH = DoubleHelix.make(game, this, viralRNA1, viralRNA2);
@@ -86,8 +86,9 @@ public class LevelTwo extends Level{
 
   void updateLevel(int delta, int time){
     theRT.update(delta);
-    viralRNA1.update(delta);
-    viralRNA2.update(delta);
+    //viralRNA1.update(delta);
+    //viralRNA2.update(delta);
+    //do not need to update strands individually because they are updated in viralDH
     viralDH.update(delta);
     theCI.update(delta);
     Contact contact = m_world.getContactList();

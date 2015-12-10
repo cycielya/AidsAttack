@@ -39,6 +39,7 @@ public class Nucleotide implements CollisionHandler{
   private Body body;
   private Fixture myBodyFixture;
   private ImageLayer myLayer;
+  private ImageLayer myNucleobaseLayer;
   private float prevX, prevY, prevA;
   LevelTwo level;
   private Nucleotide pair; // the Nucleotide it is base-paired with
@@ -57,6 +58,7 @@ public class Nucleotide implements CollisionHandler{
     n.initPhysicsBody(n.level.physicsWorld(), x, y, ang);
     n.drawNucleotideImage();
     n.level.addLayer(n.myLayer);
+    n.level.addLayer(n.myNucleobaseLayer);
     BodyDef groundBodyDef = new BodyDef();
     n.groundBody = level.physicsWorld().createBody(groundBodyDef); // groundBody only relevant for MouseJoint
     n.strand = null;
@@ -85,6 +87,32 @@ public class Nucleotide implements CollisionHandler{
     this.body = body;
     this.body.m_userData = this;
   }
+  private void drawNucleobaseImage(){
+    String imageFile = "A.png";
+    if(this.nBase == Nucleobase.A){
+      imageFile = "A.png";
+    }
+    else if(this.nBase == Nucleobase.G){
+      imageFile = "G.png";
+    }
+    else if(this.nBase == Nucleobase.U){
+      imageFile = "U.png";
+    }
+    else if(this.nBase == Nucleobase.T){
+      imageFile = "T.png";
+    }
+    else if(this.nBase == Nucleobase.C){
+      imageFile = "C.png";
+    }
+    Image myNucleobaseImage = assets().getImageSync("images/"+imageFile);
+    System.out.println("My base's image's width: "+myNucleobaseImage.width());
+    myNucleobaseLayer = graphics().createImageLayer(myNucleobaseImage);
+    myNucleobaseLayer.setOrigin(myNucleobaseImage.width() / 2f, myNucleobaseImage.height() / 2f);
+    myNucleobaseLayer.setScale(getWidth()/myNucleobaseImage.width(),getHeight()/myNucleobaseImage.height());
+    myNucleobaseLayer.setTranslation(x(), y());
+    myNucleobaseLayer.setRotation(ang());
+    myNucleobaseLayer.setDepth(2f);
+  }
 
   private void drawNucleotideImage(){
     float imageSize = 100;
@@ -99,6 +127,8 @@ public class Nucleotide implements CollisionHandler{
     myLayer.setScale(getWidth()/imageSize,getHeight()/imageSize);
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
+    myLayer.setDepth(1.5f);
+    drawNucleobaseImage();
 
     // intended for allowing click+drag control of DNA strands and
     // individual nucleotides
@@ -180,8 +210,7 @@ public class Nucleotide implements CollisionHandler{
     def.bodyB = other.body;
     //positioning of ropejoints depends on this being in a strand, other being the free nucleotide
     //places other below this, so may cause funky physics behavior immediately after connecting.
-    //TODO: figure out what to do if other is on wrong side of strand!
-    //note: sets at offset from body's origin, which is center on Nucleotide.
+    //note: sets Anchors at offset from body's origin, which is center on Nucleotide.
     def.localAnchorA.set(0f-this.getWidth()/2f, 0f+this.getHeight()/2f); //position at lower left corner
     def.localAnchorB.set(0f-other.getWidth()/2f, 0f-other.getHeight()/2f); //position at upper left corner
     def.maxLength = .5f;
@@ -234,6 +263,8 @@ public class Nucleotide implements CollisionHandler{
     float a = (ang() * alpha) + (prevA * (1f - alpha));
     myLayer.setTranslation(x, y);
     myLayer.setRotation(a);
+    myNucleobaseLayer.setTranslation(x,y);
+    myNucleobaseLayer.setRotation(a);
   }
   //TODO: Manage collisions with other nucleotides. Should they bond?
   public void handleCollision(Fixture me, Fixture other){
