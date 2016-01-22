@@ -279,11 +279,18 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     myNucleobaseLayer.setTranslation(x,y);
     myNucleobaseLayer.setRotation(a);
   }
+  //beginContact, endContact, postSolve and preSolve are all required functions
+  //for the ContactListener interface.
+  //NOTE: No extra code should be added to these functions unless ABSOLUTELY NECESSARY.
+  //The inRT field should not be set anywhere other than in beginContact
+  //and in endContact, except for when it is initialized to false.
   public void beginContact(Contact contact){
     Object a = contact.getFixtureA().getUserData();
     Object b = contact.getFixtureB().getUserData();
     if(a != null && b != null){
       if(a instanceof ReverseTranscriptase || b instanceof ReverseTranscriptase){
+        //allows Nucleotides to recognize when they are at least partially within the
+        //area of the RT. Will only base-pair if both are.
         this.inRT = true;
       }
     }
@@ -293,6 +300,8 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     Object b = contact.getFixtureB().getUserData();
     if(a != null && b != null){
       if(a instanceof ReverseTranscriptase || b instanceof ReverseTranscriptase){
+        //allows Nucleotides to recognize when they have entirely left the area of
+        //the RT.
         this.inRT = false;
       }
     }
@@ -312,10 +321,12 @@ public class Nucleotide implements CollisionHandler, ContactListener{
       Nucleotide otherN = (Nucleotide) other.m_userData;
       //here, check if otherN is in a strand
       //if in a strand, do nothing.
-      //if free, then alert my strand with this and otherN, unless I'm already paired.
-      if(!otherN.inStrand() && this.inStrand() && !this.isBasePaired()){
+      //if free, then alert my strand's DH, if it has one, with this and otherN, unless I'm already paired.
+      //TODO: clean this up, if at all possible. May just have to be really long if-statement.
+      //Elminated need for alert() method in strand, however. Yay! Less redundant code!
+      if(!otherN.inStrand() && this.inStrand() && this.strand.inDoubleHelix() && !this.isBasePaired()){
         if(this.inRT() && otherN.inRT()){
-          this.strand.alert(this, otherN);
+          this.strand.getDoubleHelix().alert(this, otherN);
           System.out.println("Hey strand! Found a straggler!");
         }
       }
