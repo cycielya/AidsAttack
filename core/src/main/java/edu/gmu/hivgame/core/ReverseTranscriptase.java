@@ -35,6 +35,7 @@ import playn.core.TextWrap;
 import playn.core.Font;
 import playn.core.util.TextBlock;
 
+//TODO: add second zone/object to split DNAStrand after reverse transcription
 public class ReverseTranscriptase implements CollisionHandler {
   // for calculating interpolation
   private float prevX, prevY, prevA;

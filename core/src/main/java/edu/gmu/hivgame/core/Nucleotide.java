@@ -18,6 +18,10 @@ import org.jbox2d.dynamics.joints.RopeJointDef;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.dynamics.contacts.Contact;
+import org.jbox2d.collision.Manifold;
 
 import playn.core.ImageLayer;
 import playn.core.Image;
@@ -31,7 +35,11 @@ import playn.core.Pointer;
 // pair with one other nucleotide, depending on the type of base each one has.
 // It can also strand link, which is to say, become associated with up to two
 // other nucleotides that would be on either side of it in a single-strand DNA or RNA.
-public class Nucleotide implements CollisionHandler{
+// TODO: make Nucleotide implement ContactListener
+//    Only connect if both Nucleotides have boolean contactingRT set to true.
+//    Rename image loading method
+//    Test synchronous image loading w/ html,javascript, etc
+public class Nucleotide implements CollisionHandler, ContactListener{
   AidsAttack game;
   private float width = 1f;
   private float height = 1f;
@@ -47,6 +55,7 @@ public class Nucleotide implements CollisionHandler{
   private Body groundBody; // used for MouseJoint, does not have relevance to anything else
   private MouseJoint mouseJoint; // to make a nucleotide player-controllable
   DNAStrand strand;
+  private boolean inRT; //designates if currently in contact with ReverseTranscriptase
 
   private Nucleotide(){}
   public static Nucleotide make(AidsAttack game, Level level, Nucleobase nBase, float x, float y, float ang){
@@ -56,6 +65,7 @@ public class Nucleotide implements CollisionHandler{
     n.game = game;
     n.level = (LevelTwo) level;
     n.initPhysicsBody(n.level.physicsWorld(), x, y, ang);
+    n.inRT = false;
     n.drawNucleotideImage();
     n.level.addLayer(n.myLayer);
     n.level.addLayer(n.myNucleobaseLayer);
@@ -199,6 +209,9 @@ public class Nucleotide implements CollisionHandler{
   public boolean pairsWith(Nucleotide other){
     return this.nBase.pairsWith(other.nBase);
   }
+  public boolean inRT(){
+    return this.inRT;
+  }
   //attempts to pair two Nucleotides. Returns true on successful pairing, false on wrong pair.
   //does NOT create physics link between the nucleotides.
   public boolean basePair(Nucleotide other){
@@ -266,6 +279,27 @@ public class Nucleotide implements CollisionHandler{
     myNucleobaseLayer.setTranslation(x,y);
     myNucleobaseLayer.setRotation(a);
   }
+  public void beginContact(Contact contact){
+    Object a = contact.getFixtureA().getUserData();
+    Object b = contact.getFixtureB().getUserData();
+    if(a != null && b != null){
+      if(a instanceof ReverseTranscriptase || b instanceof ReverseTranscriptase){
+        this.inRT = true;
+      }
+    }
+  }
+  public void endContact(Contact contact){
+    Object a = contact.getFixtureA().getUserData();
+    Object b = contact.getFixtureB().getUserData();
+    if(a != null && b != null){
+      if(a instanceof ReverseTranscriptase || b instanceof ReverseTranscriptase){
+        this.inRT = false;
+      }
+    }
+  }
+  public void postSolve(Contact contact, ContactImpulse impulse){}
+  public void preSolve(Contact contact, Manifold oldManifold){}
+
   //TODO: Manage collisions with other nucleotides. Should they bond?
   public void handleCollision(Fixture me, Fixture other){
     if(me != this.myBodyFixture){
@@ -280,8 +314,10 @@ public class Nucleotide implements CollisionHandler{
       //if in a strand, do nothing.
       //if free, then alert my strand with this and otherN, unless I'm already paired.
       if(!otherN.inStrand() && this.inStrand() && !this.isBasePaired()){
-        this.strand.alert(this, otherN);
-        System.out.println("Hey strand! Found a straggler!");
+        if(this.inRT() && otherN.inRT()){
+          this.strand.alert(this, otherN);
+          System.out.println("Hey strand! Found a straggler!");
+        }
       }
     }
   }
