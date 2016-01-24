@@ -37,15 +37,14 @@ import playn.core.util.TextBlock;
 
 //TODO: add second zone/object to split DNAStrand after reverse transcription
 public class ReverseTranscriptase implements CollisionHandler {
-  // for calculating interpolation
-  private float prevX, prevY, prevA;
+  AidsAttack game;
+  LevelTwo level;
+  private float prevX, prevY, prevA; // for calculating interpolation
   final float radius = 1f;
   final float diameter = radius*2f;
   private Body body;
   private Fixture myBodyFixture;
   private ImageLayer myLayer;
-  AidsAttack game;
-  LevelTwo level;
   private Body groundBody; // used for MouseJoint, does not have relevance to anything else
   private MouseJoint mouseJoint; // to make a nucleotide player-controllable
 

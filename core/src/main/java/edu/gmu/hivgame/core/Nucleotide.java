@@ -35,26 +35,24 @@ import playn.core.Pointer;
 // pair with one other nucleotide, depending on the type of base each one has.
 // It can also strand link, which is to say, become associated with up to two
 // other nucleotides that would be on either side of it in a single-strand DNA or RNA.
-// TODO: make Nucleotide implement ContactListener
-//    Only connect if both Nucleotides have boolean contactingRT set to true.
+// Nucleotides only connect if both Nucleotides have boolean inRT set to true.
 //    Rename image loading method
 //    Test synchronous image loading w/ html,javascript, etc
 public class Nucleotide implements CollisionHandler, ContactListener{
   AidsAttack game;
+  LevelTwo level;
+  DNAStrand strand;
   private float width = 1f;
   private float height = 1f;
+  private float prevX, prevY, prevA;
   private Nucleobase nBase; // see enum Nucleobase definition in Nucleobase.java
   private Body body;
   private Fixture myBodyFixture;
   private ImageLayer myLayer;
   private ImageLayer myNucleobaseLayer;
-  private float prevX, prevY, prevA;
-  LevelTwo level;
   private Nucleotide pair; // the Nucleotide it is base-paired with
-  //private boolean movable;
   private Body groundBody; // used for MouseJoint, does not have relevance to anything else
   private MouseJoint mouseJoint; // to make a nucleotide player-controllable
-  DNAStrand strand;
   private boolean inRT; //designates if currently in contact with ReverseTranscriptase
 
   private Nucleotide(){}
@@ -309,7 +307,6 @@ public class Nucleotide implements CollisionHandler, ContactListener{
   public void postSolve(Contact contact, ContactImpulse impulse){}
   public void preSolve(Contact contact, Manifold oldManifold){}
 
-  //TODO: Manage collisions with other nucleotides. Should they bond?
   public void handleCollision(Fixture me, Fixture other){
     if(me != this.myBodyFixture){
       return;
