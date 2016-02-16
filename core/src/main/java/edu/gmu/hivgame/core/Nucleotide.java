@@ -25,6 +25,7 @@ import org.jbox2d.collision.Manifold;
 
 import playn.core.ImageLayer;
 import playn.core.Image;
+import playn.core.util.Callback;
 import playn.core.CanvasImage;
 import playn.core.Canvas;
 import static playn.core.PlayN.pointer;
@@ -118,15 +119,27 @@ public class Nucleotide implements CollisionHandler, ContactListener{
       imageFile = "C.png";
       this.fillColor = 0xff2469ae;
     }
-    Image myNucleobaseImage = assets().getImageSync("images/"+imageFile);
+    Image myNucleobaseImage = assets().getImage("images/"+imageFile);
     System.out.println("My base's image's width: "+myNucleobaseImage.width());
     myNucleobaseLayer = graphics().createImageLayer(myNucleobaseImage);
-    myNucleobaseLayer.setOrigin(myNucleobaseImage.width() / 2f, myNucleobaseImage.height() / 2f);
-    myNucleobaseLayer.setScale(getWidth()/myNucleobaseImage.width(),getHeight()/myNucleobaseImage.height());
-    myNucleobaseLayer.setTranslation(x(), y());
-    myNucleobaseLayer.setRotation(ang());
-    myNucleobaseLayer.setDepth(2f);
+    myNucleobaseImage.addCallback(new Callback<Image>() {
+        @Override
+        public void onSuccess(Image myNucleobaseImage) {
+          myNucleobaseLayer.setOrigin(myNucleobaseImage.width() / 2f, myNucleobaseImage.height() / 2f);
+          myNucleobaseLayer.setScale(getWidth()/myNucleobaseImage.width(),getHeight()/myNucleobaseImage.height());
+          myNucleobaseLayer.setTranslation(x(), y());
+          myNucleobaseLayer.setRotation(ang());
+          myNucleobaseLayer.setDepth(2f);
+        }
+
+        @Override
+        public void onFailure(Throwable err) {
+          log().error("Error loading image: " + err.getMessage());
+        }
+      });
   }
+
+
 
   private void drawNucleotideImage(){
     float imageSize = 100;
