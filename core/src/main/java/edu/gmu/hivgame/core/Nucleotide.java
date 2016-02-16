@@ -46,6 +46,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
   private float height = 1f;
   private float prevX, prevY, prevA;
   private Nucleobase nBase; // see enum Nucleobase definition in Nucleobase.java
+  private int fillColor;
   private Body body;
   private Fixture myBodyFixture;
   private ImageLayer myLayer;
@@ -99,18 +100,23 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     String imageFile = "A.png";
     if(this.nBase == Nucleobase.A){
       imageFile = "A.png";
+      this.fillColor = 0xffd44844;
     }
     else if(this.nBase == Nucleobase.G){
       imageFile = "G.png";
+      this.fillColor = 0xff3c8757;
     }
     else if(this.nBase == Nucleobase.U){
       imageFile = "U.png";
+      this.fillColor = 0xfffac22a;
     }
     else if(this.nBase == Nucleobase.T){
       imageFile = "T.png";
+      this.fillColor = 0xfffac22a;
     }
     else if(this.nBase == Nucleobase.C){
       imageFile = "C.png";
+      this.fillColor = 0xff2469ae;
     }
     Image myNucleobaseImage = assets().getImageSync("images/"+imageFile);
     System.out.println("My base's image's width: "+myNucleobaseImage.width());
@@ -124,10 +130,11 @@ public class Nucleotide implements CollisionHandler, ContactListener{
 
   private void drawNucleotideImage(){
     float imageSize = 100;
+    drawNucleobaseImage();
     CanvasImage image = graphics().createImage(imageSize, imageSize);
     Canvas canvas = image.canvas();
     //should be a darkish yellow, or gold color
-    canvas.setFillColor(0xfffac22a);
+    canvas.setFillColor(this.fillColor);
     //coordinates are for upper-left corner placement
     canvas.fillRect(0f, 0f, imageSize, imageSize);
     myLayer = graphics().createImageLayer(image);
@@ -136,7 +143,6 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
     myLayer.setDepth(1.5f);
-    drawNucleobaseImage();
 
     // intended for allowing click+drag control of DNA strands and
     // individual nucleotides
