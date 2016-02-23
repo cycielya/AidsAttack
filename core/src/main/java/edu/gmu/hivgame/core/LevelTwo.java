@@ -85,6 +85,10 @@ public class LevelTwo extends Level{
   }
 
   void updateLevel(int delta, int time){
+    Nucleotide theUNA = viralDH.getUNA();
+    if (theUNA != null && theUNA.inRT() && theUNA.notBoundToRT()){
+      theRT.bindUNA(theUNA);
+    }
     theRT.update(delta);
     //viralRNA1.update(delta);
     //viralRNA2.update(delta);

@@ -55,6 +55,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
   private Body groundBody; // used for MouseJoint, does not have relevance to anything else
   private MouseJoint mouseJoint; // to make a nucleotide player-controllable
   private boolean inRT; //designates if currently in contact with ReverseTranscriptase
+  private boolean notBoundToRT; //generally will be true; only one (UNA) will be false(bound) and only if in RT
 
   private Nucleotide(){}
   public static Nucleotide make(AidsAttack game, Level level, Nucleobase nBase, float x, float y, float ang){
@@ -65,6 +66,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     n.level = (LevelTwo) level;
     n.initPhysicsBody(n.level.physicsWorld(), x, y, ang);
     n.inRT = false;
+    n.notBoundToRT = true;
     n.drawNucleotideImage();
     n.level.addLayer(n.myLayer);
     n.level.addLayer(n.myNucleobaseLayer);
@@ -213,11 +215,22 @@ public class Nucleotide implements CollisionHandler, ContactListener{
   public boolean pairsWith(Nucleotide other){
     return this.nBase.pairsWith(other.nBase);
   }
+  public String getBase(){
+    return this.nBase.toString();
+  }
   public boolean inRT(){
     return this.inRT;
   }
+  public boolean notBoundToRT(){
+    return this.notBoundToRT;
+  }
+  public void bindToRT(){
+    this.notBoundToRT = false;
+  }
+  public void unbindFromRT(){
+    this.notBoundToRT = true;
+  }
   //attempts to pair two Nucleotides. Returns true on successful pairing, false on wrong pair.
-  //does NOT create physics link between the nucleotides.
   public boolean basePair(Nucleotide other){
     this.pair = other;
     other.pair = this;
@@ -236,6 +249,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     def.localAnchorA.set(0f+this.getWidth()/2f, 0f+this.getHeight()/2f); //position at lower right corner
     def.localAnchorB.set(0f+other.getWidth()/2f, 0f-other.getHeight()/2f); //position at upper right corner
     RopeJoint rj2 = (RopeJoint) this.level.physicsWorld().createJoint(def);
+    System.out.println("Base-paired!");
     if (this.pairsWith(other)){
       return true;
     }
@@ -296,6 +310,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
         //allows Nucleotides to recognize when they are at least partially within the
         //area of the RT. Will only base-pair if both are.
         this.inRT = true;
+        System.out.println("Ran into RT!");
       }
     }
   }
@@ -307,6 +322,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
         //allows Nucleotides to recognize when they have entirely left the area of
         //the RT.
         this.inRT = false;
+        System.out.println("Departing the RT with base "+this.nBase.toString());
       }
     }
   }
@@ -318,7 +334,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
       return;
     }
     if(other.m_userData instanceof ReverseTranscriptase){
-      System.out.println("Hit the RT!");
+      //System.out.println("Hit the RT!");
     }
     else if (other.m_userData instanceof Nucleotide){
       Nucleotide otherN = (Nucleotide) other.m_userData;
@@ -329,8 +345,8 @@ public class Nucleotide implements CollisionHandler, ContactListener{
       //Elminated need for alert() method in strand, however. Yay! Less redundant code!
       if(!otherN.inStrand() && this.inStrand() && this.strand.inDoubleHelix() && !this.isBasePaired()){
         if(this.inRT() && otherN.inRT()){
-          this.strand.getDoubleHelix().alert(this, otherN);
           System.out.println("Hey strand! Found a straggler!");
+          this.strand.getDoubleHelix().alert(this, otherN);
         }
       }
     }
