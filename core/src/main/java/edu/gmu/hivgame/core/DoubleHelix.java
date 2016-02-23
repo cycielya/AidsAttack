@@ -85,15 +85,33 @@ public class DoubleHelix{
   //Alert method to be used by DNAStrand when a Nucleotide in the strand hits a free nucleotide.
   public void alert(Nucleotide mine, Nucleotide other){
     //Assumption checking.
-    if( mine == null || other == null || other.inStrand() || this.getUNA() == null
-        || !this.getUNA().equals(mine) ){
+    //if( mine == null || other == null || other.inStrand() || this.getUNA() == null
+        //|| !this.getUNA().equals(mine) ){
       //System.out.println("Strand, why you lyin' to me now?");
+    if(mine == null || other == null){
+      System.out.println("alert failed: nucleotide was null.");
       return;
     }
+    if(other.inStrand()){
+      System.out.println("alert failed: other was in strand.");
+      return;
+    }
+    if(this.getUNA() == null){
+      System.out.println("alert failed: UNA was null.");
+      return;
+    }
+    if(!this.getUNA().equals(mine)){
+      System.out.println("alert failed: mine was not UNA.");
+      System.out.println("My base is: "+mine.getBase());
+      System.out.println("UNA base is: "+this.getUNA().getBase());
+      return;
+    }
+
     System.out.println("Cool! uNA found someone!");
     //Now do the thing!
     //Must base-pair other with mine.
     boolean goodPair = mine.basePair(other);
+    this.level.theRT.unBindUNA(mine);
     if(goodPair){
       correctMatches++;
     }
@@ -104,6 +122,12 @@ public class DoubleHelix{
     //then add other to end of strandB
     strandB.addNucleotide(other);
     evalUNA();
+    /*if(yes){
+      this.level.theRT.bindUNA(this.getUNA());
+    }
+    else{
+      System.out.println("Oh no! I don't have a UNA!");
+    }*/
   }
 
   //intended for if generating a double helix from two pre-populated DNAStrands.

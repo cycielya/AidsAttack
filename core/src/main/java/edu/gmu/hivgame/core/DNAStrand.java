@@ -123,7 +123,7 @@ public class DNAStrand{
        !( mine.inStrand() && this.equals(mine.getStrand()) ) ||
        other.inStrand()
        ){
-        //System.out.println("Nucleotide, why you lyin' to me?");
+        System.out.println("Nucleotide, why you lyin' to me?");
         return;
     }
     //System.out.println("I believe you, Nucleotide.");

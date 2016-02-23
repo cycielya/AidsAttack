@@ -16,6 +16,8 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.MouseJoint;
 import org.jbox2d.dynamics.joints.MouseJointDef;
+import org.jbox2d.dynamics.joints.RopeJoint;
+import org.jbox2d.dynamics.joints.RopeJointDef;
 
 import static playn.core.PlayN.assets;
 import static playn.core.PlayN.graphics;
@@ -47,6 +49,7 @@ public class ReverseTranscriptase implements CollisionHandler {
   private ImageLayer myLayer;
   private Body groundBody; // used for MouseJoint, does not have relevance to anything else
   private MouseJoint mouseJoint; // to make a nucleotide player-controllable
+  private RopeJoint uNAJoint;
 
   private ReverseTranscriptase(){}
   public static ReverseTranscriptase make(AidsAttack game, Level level, float x, float y, float ang){
@@ -86,7 +89,6 @@ public class ReverseTranscriptase implements CollisionHandler {
     fd.density = 1.0f;
     this.myBodyFixture = body.createFixture(fd);
     this.myBodyFixture.m_userData = this;
-
   }
 
   private void drawRTImage(){
@@ -101,7 +103,7 @@ public class ReverseTranscriptase implements CollisionHandler {
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
     myLayer.setScale(diameter/imageSize, diameter/imageSize);
-    myLayer.setDepth(6);
+    myLayer.setDepth(2);
     this.myLayer.addListener(new Pointer.Adapter() {
       @Override
       public void onPointerStart(Pointer.Event event){
@@ -137,9 +139,9 @@ public class ReverseTranscriptase implements CollisionHandler {
   }
 
   public void handleCollision(Fixture me, Fixture other){
-    System.out.println("Ran into something!");
+    //System.out.println("Ran into something!");
     if(me == this.myBodyFixture && other.m_userData instanceof Nucleotide){
-      Nucleotide n = (Nucleotide) other.m_userData;
+      /*Nucleotide n = (Nucleotide) other.m_userData;
       if(n.inStrand()){
         DNAStrand strand = n.getStrand();
         if(strand.inDoubleHelix()){
@@ -147,10 +149,34 @@ public class ReverseTranscriptase implements CollisionHandler {
           if(n.equals(dh.getUNA())){
           }
         }
-      }
+      }*/
     }
     else{
       System.out.println("Contacted: "+other.m_userData.toString());
+    }
+  }
+
+  //TODO: For some reason, something in this method is triggering endContact()
+  //between UNA and theRT. Is being connected by a joint the issue?
+  public void bindUNA(Nucleotide uNA){
+    if(uNA != null){
+      RopeJointDef def = new RopeJointDef();
+      def.bodyA = this.body;
+      def.bodyB = uNA.body();
+      def.localAnchorA.set(0f,0f);
+      def.localAnchorB.set(0f,0f);
+      def.maxLength = 0.05f;
+      def.collideConnected = true;
+      this.uNAJoint = (RopeJoint) this.level.physicsWorld().createJoint(def);
+      uNA.bindToRT();
+      System.out.println("Bound!");
+    }
+  }
+  public void unBindUNA(Nucleotide uNA){
+    if(uNA != null && this.uNAJoint != null){
+      this.level.physicsWorld().destroyJoint(this.uNAJoint);
+      this.uNAJoint = null;
+      uNA.unbindFromRT();
     }
   }
 
