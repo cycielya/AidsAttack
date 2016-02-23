@@ -125,7 +125,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     myNucleobaseLayer.setScale(getWidth()/myNucleobaseImage.width(),getHeight()/myNucleobaseImage.height());
     myNucleobaseLayer.setTranslation(x(), y());
     myNucleobaseLayer.setRotation(ang());
-    myNucleobaseLayer.setDepth(2f);
+    myNucleobaseLayer.setDepth(3f);
   }
 
   private void drawNucleotideImage(){
@@ -142,7 +142,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     myLayer.setScale(getWidth()/imageSize,getHeight()/imageSize);
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
-    myLayer.setDepth(1.5f);
+    myLayer.setDepth(2.5f);
 
     // intended for allowing click+drag control of DNA strands and
     // individual nucleotides

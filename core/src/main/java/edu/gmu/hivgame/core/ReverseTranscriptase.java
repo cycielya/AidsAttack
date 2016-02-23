@@ -101,7 +101,7 @@ public class ReverseTranscriptase implements CollisionHandler {
     myLayer.setTranslation(x(), y());
     myLayer.setRotation(ang());
     myLayer.setScale(diameter/imageSize, diameter/imageSize);
-    myLayer.setDepth(6);
+    myLayer.setDepth(2);
     this.myLayer.addListener(new Pointer.Adapter() {
       @Override
       public void onPointerStart(Pointer.Event event){
@@ -145,6 +145,7 @@ public class ReverseTranscriptase implements CollisionHandler {
         if(strand.inDoubleHelix()){
           DoubleHelix dh = strand.getDoubleHelix();
           if(n.equals(dh.getUNA())){
+            System.out.println("Hit UNA, binding!");
           }
         }
       }
