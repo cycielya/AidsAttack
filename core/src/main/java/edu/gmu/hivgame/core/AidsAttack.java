@@ -248,12 +248,13 @@ public class AidsAttack extends Game.Default {
     currentLevel.gameOver = true;
   }
   public void gameMessage(String msg){
-    CanvasImage image = graphics().createImage(200,200);
+    CanvasImage image = graphics().createImage(300,100);
     Canvas canvas = image.canvas();
     canvas.setFillColor(0xff050505);
     //Assumption: text will fit on canvas
-    canvas.drawText(msg,100,100);
+    canvas.drawText(msg,0,50);
     ImageLayer msgLayer = graphics().createImageLayer(image);
+    msgLayer.setTranslation(200f,200f);
     msgLayer.setDepth(6);
     graphics().rootLayer().add(msgLayer);
     pointer().setListener(null);

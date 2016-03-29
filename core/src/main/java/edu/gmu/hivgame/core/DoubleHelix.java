@@ -156,7 +156,8 @@ public class DoubleHelix{
     }
     if(this.completed){
       //System.out.printf("Strand completed! %d good matches, %d bad matches.\n", correctMatches, mismatches);
-      game.successCurrentLevel();
+      //game.successCurrentLevel();
+      this.level.successLevel();
     }
     if(strandA != null){
       this.strandA.update(delta);

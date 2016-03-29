@@ -131,7 +131,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
           myNucleobaseLayer.setScale(getWidth()/myNucleobaseImage.width(),getHeight()/myNucleobaseImage.height());
           myNucleobaseLayer.setTranslation(x(), y());
           myNucleobaseLayer.setRotation(ang());
-          myNucleobaseLayer.setDepth(2f);
+          myNucleobaseLayer.setDepth(3f);
         }
 
         @Override
