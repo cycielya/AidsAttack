@@ -83,6 +83,13 @@ public class LevelTwo extends Level{
       System.out.println("Starting minigame!");
     }
   }
+  @Override
+  void successLevel(){
+    super.successLevel();
+    game.gameMessage(String.format("Level Complete! %d good matches, %d mismatches.",
+                                  this.viralDH.getCorrectMatches(),
+                                  this.viralDH.getMismatches()));
+  }
 
   void updateLevel(int delta, int time){
     Nucleotide theUNA = viralDH.getUNA();

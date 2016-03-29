@@ -97,7 +97,7 @@ public class AidsAttack extends Game.Default {
   //Retaining a level list allows for smooth transition between levels of gameplay.
   public void populateLevelList(){
     //size anticipates a third level of gameplay, not yet implemented.
-    levels = new Level[3];
+    levels = new Level[2];
     levels[0] = LevelOne.make(this);
     levels[1] = LevelTwo.make(this);
   }
@@ -247,19 +247,32 @@ public class AidsAttack extends Game.Default {
     gameOver = true;
     currentLevel.gameOver = true;
   }
+  public void gameMessage(String msg){
+    CanvasImage image = graphics().createImage(200,200);
+    Canvas canvas = image.canvas();
+    canvas.setFillColor(0xff050505);
+    //Assumption: text will fit on canvas
+    canvas.drawText(msg,100,100);
+    ImageLayer msgLayer = graphics().createImageLayer(image);
+    msgLayer.setDepth(6);
+    graphics().rootLayer().add(msgLayer);
+    pointer().setListener(null);
+    keyboard().setListener(null);
+  }
 
   public void successCurrentLevel(){
     currentLevel.endLevel();
     currentLevel.successLevel();
     int i;
-    for(i=0; i<levels.length && currentLevel != levels[i]; i++){}
+    for(i=0; (i<levels.length) && (currentLevel != levels[i]); i++){}
     if(i >= levels.length-1){
+      //gameMessage("Level complete!");
     }
     else{
       currentLevel = levels[i+1];
+      currentLevel.initLevel(camera);
+      camera.reset();
     }
-    currentLevel.initLevel(camera);
-    camera.reset();
     initUI();
     initKeyControls();
   }

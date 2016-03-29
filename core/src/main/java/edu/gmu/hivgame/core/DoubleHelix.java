@@ -9,6 +9,7 @@ public class DoubleHelix{
   private int mismatches;
   private boolean newStrand; //Has a strand been added that has not been base-paired yet?
   private Nucleotide uNA; //unpaired Nucleotide A (on strandA)
+  private boolean completed; //tracks whether every Nucleotide in strandA has been paired
 
   private DoubleHelix(AidsAttack game, Level level){
     this.game = game;
@@ -17,6 +18,7 @@ public class DoubleHelix{
     this.strandB = null;
     this.uNA = null;
     this.newStrand = false;
+    this.completed = false;
   }
   public static DoubleHelix make(AidsAttack game, Level level){
     DoubleHelix dh = new DoubleHelix(game, level);
@@ -63,6 +65,7 @@ public class DoubleHelix{
     }
     else{
       this.uNA = null;
+      this.completed = true;
       return false;
     }
   }
@@ -81,6 +84,15 @@ public class DoubleHelix{
   }
   public DNAStrand getStrandB(){
     return this.strandB;
+  }
+  public boolean getCompleted(){
+    return this.completed;
+  }
+  public int getCorrectMatches(){
+    return this.correctMatches;
+  }
+  public int getMismatches(){
+    return this.mismatches;
   }
   //Alert method to be used by DNAStrand when a Nucleotide in the strand hits a free nucleotide.
   public void alert(Nucleotide mine, Nucleotide other){
@@ -141,6 +153,10 @@ public class DoubleHelix{
   public void update(int delta){
     if(this.newStrand){
       evalUNA();
+    }
+    if(this.completed){
+      //System.out.printf("Strand completed! %d good matches, %d bad matches.\n", correctMatches, mismatches);
+      game.successCurrentLevel();
     }
     if(strandA != null){
       this.strandA.update(delta);
