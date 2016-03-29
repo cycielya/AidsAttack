@@ -188,19 +188,22 @@ public class Nucleotide implements CollisionHandler, ContactListener{
 
   // other is the new Nucleotide being added to the strand.
   // visualize as this being last one in a DNA strand, and other being added to the end.
-  // TODO: create a version of this to link two paired nucleotides! Or edit basePair()
   public void strandLink(Nucleotide other){
-    RopeJointDef def = new RopeJointDef();
+    //RopeJointDef def = new RopeJointDef();
+    DistanceJointDef def = new DistanceJointDef();
     def.bodyA = this.body;
     def.bodyB = other.body;
     def.localAnchorA.set(0f+this.getWidth()/2f,0f-this.getHeight()/2f); //position at upper right corner
     def.localAnchorB.set(0f-other.getWidth()/2f,0f-other.getHeight()/2f); //position at upper left corner
-    def.maxLength = .75f;
+    //def.maxLength = .75f;
+    def.length = .25f;
     def.collideConnected = true;
-    RopeJoint rj = (RopeJoint) this.level.physicsWorld().createJoint(def);
+    //RopeJoint rj = (RopeJoint) this.level.physicsWorld().createJoint(def);
+    DistanceJoint dj = (DistanceJoint) this.level.physicsWorld().createJoint(def);
     def.localAnchorA.set(0f+this.getWidth()/2f, 0f+this.getHeight()/2f); //position at lower right corner
     def.localAnchorB.set(0f-other.getWidth()/2f, 0f+other.getHeight()/2f); //position at lower left corner
-    RopeJoint rj2 = (RopeJoint) this.level.physicsWorld().createJoint(def);
+    //RopeJoint rj2 = (RopeJoint) this.level.physicsWorld().createJoint(def);
+    DistanceJoint dj2 = (DistanceJoint) this.level.physicsWorld().createJoint(def);
   }
   public boolean inStrand(){
     return (this.strand != null)? true : false;
