@@ -24,6 +24,7 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.collision.Manifold;
 
 import playn.core.ImageLayer;
+import playn.core.GroupLayer;
 import playn.core.Image;
 import playn.core.util.Callback;
 import playn.core.CanvasImage;
@@ -52,11 +53,14 @@ public class Nucleotide implements CollisionHandler, ContactListener{
   private Fixture myBodyFixture;
   private ImageLayer myLayer;
   private ImageLayer myNucleobaseLayer;
+  private ImageLayer myBackboneLayer;
+  private GroupLayer myImages;
   private Nucleotide pair; // the Nucleotide it is base-paired with
   private Body groundBody; // used for MouseJoint, does not have relevance to anything else
   private MouseJoint mouseJoint; // to make a nucleotide player-controllable
   private boolean inRT; //designates if currently in contact with ReverseTranscriptase
   private boolean notBoundToRT; //generally will be true; only one (UNA) will be false(bound) and only if in RT
+  private String backboneImageName;
 
   private Nucleotide(){}
   public static Nucleotide make(AidsAttack game, Level level, Nucleobase nBase, float x, float y, float ang){
@@ -68,9 +72,13 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     n.initPhysicsBody(n.level.physicsWorld(), x, y, ang);
     n.inRT = false;
     n.notBoundToRT = true;
+    n.backboneImageName = null;
+    n.myBackboneLayer = null;
+    n.myImages = graphics().createGroupLayer();
     n.drawNucleotideImage();
     n.level.addLayer(n.myLayer);
     n.level.addLayer(n.myNucleobaseLayer);
+    //n.level.addLayer(n.myImages);
     BodyDef groundBodyDef = new BodyDef();
     n.groundBody = level.physicsWorld().createBody(groundBodyDef); // groundBody only relevant for MouseJoint
     n.strand = null;
@@ -139,6 +147,33 @@ public class Nucleotide implements CollisionHandler, ContactListener{
           log().error("Error loading image: " + err.getMessage());
         }
       });
+  }
+
+  public void addBackboneImage(String imageName){
+    if(imageName != null){
+      System.out.println("Should be adding the backbone image!");
+      Image myBackboneImage = assets().getImage("images/"+imageName);
+      myBackboneLayer = graphics().createImageLayer(myBackboneImage);
+      this.backboneImageName = imageName;
+      myBackboneImage.addCallback(new Callback<Image>() {
+        @Override
+        public void onSuccess(Image myBackboneImage){
+          myBackboneLayer.setOrigin(myBackboneImage.width() / 2f, myBackboneImage.height() / 2f);
+          //want backbone to have same scale as the Nucleotide it's attached to.
+          myBackboneLayer.setScale(getWidth()/myBackboneImage.width(), getHeight()/myBackboneImage.height());
+          //place equal on x axis, above on y axis. 
+          myBackboneLayer.setTranslation(x(), y()-getHeight()/2f);
+          myBackboneLayer.setRotation(ang());
+          myBackboneLayer.setDepth(4f);
+          level.addLayer(myBackboneLayer);
+        }
+        @Override
+        public void onFailure(Throwable err){
+          log().error("Error loading image: " + err.getMessage());
+          System.out.println("Adding backbone image failed.");
+        }
+      });
+    }
   }
 
 
@@ -312,6 +347,10 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     myLayer.setRotation(a);
     myNucleobaseLayer.setTranslation(x,y);
     myNucleobaseLayer.setRotation(a);
+    if(myBackboneLayer != null){
+      myBackboneLayer.setTranslation(x,y-(getHeight()/2f));
+      myBackboneLayer.setRotation(a);
+    }
   }
   //beginContact, endContact, postSolve and preSolve are all required functions
   //for the ContactListener interface.

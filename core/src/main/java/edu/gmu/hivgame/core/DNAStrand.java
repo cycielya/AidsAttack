@@ -17,10 +17,12 @@ public class DNAStrand{
   private LevelTwo level;
   private LinkedList<Nucleotide> strand;
   DoubleHelix dh;
+  private String backboneImage;
 
   private DNAStrand(AidsAttack game, Level level){
     this.game = game;
     this.level = (LevelTwo) level;
+    this.backboneImage = null;
     strand = new LinkedList<Nucleotide>();
   }
   public static DNAStrand make(AidsAttack game, Level level, float x, float y, int length){
@@ -28,7 +30,15 @@ public class DNAStrand{
     BodyDef bodyDef = new BodyDef();
     s.populateStrand(length, x, y);
     s.dh = null;
+    s.backboneImage = null;
     return s;
+  }
+  public void addBackboneImage(String image){
+    this.backboneImage = image;
+    ListIterator<Nucleotide> iterator = strand.listIterator(0);
+    while(iterator.hasNext()){
+      iterator.next().addBackboneImage(this.backboneImage);
+    }
   }
   public boolean inDoubleHelix(){
     return (this.dh != null)? true : false;
@@ -74,6 +84,9 @@ public class DNAStrand{
     }
     n.setStrand(this);
     strand.addLast(n);
+    if(this.backboneImage != null){
+      n.addBackboneImage(this.backboneImage);
+    }
   }
 
   public void addNucleotide(Nucleotide n){

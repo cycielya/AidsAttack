@@ -1,5 +1,6 @@
 Design doc for getting nucleotides to pair into double strands
 
+**Note: UNA = Unpaired Nucleotide A (in strand A of a double helix)
 - Nucleotide x collision with another nucleotide y:
 - Nucleotide.handleCollison() (from interface CollisionHandler)
 - x is in already in a DNAStrand and is responsible for grabbing y if
@@ -21,3 +22,15 @@ Design doc for getting nucleotides to pair into double strands
   physical connection to another Nucleotide in strandB
 - D invokes evalUNA() to update which is the unpaired nucleotide in
   D.strandA
+
+Design for binding/unbinding of RT:
+- When alert() in DoubleHelix is called, if successful
+  (UNA has become paired with another nucleotide), then
+  ReverseTranscriptase's unbindUNA() is called. There is no
+  call to bindUNA() immediately following; instead, in LevelTwo's
+  update() method, bindUNA() will be called if UNA is in contact
+  with the RT and not already bound.
+
+Meet again next Tuesday!
+Add stuff for binding/unbinding of RT
+Graphics are next! Make RT look pretty, give strands a backbone

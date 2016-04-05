@@ -1,5 +1,6 @@
 package edu.gmu.hivgame.core;
 import org.jbox2d.common.Vec2;
+
 public class DoubleHelix{
   private AidsAttack game;
   private LevelTwo level;
@@ -34,6 +35,7 @@ public class DoubleHelix{
   public void setStrandA(DNAStrand strandA){
     this.strandA = strandA;
     this.strandA.setDoubleHelix(this);
+    this.strandA.addBackboneImage("tendril_red.png");
     this.newStrand = true;
   }
   public void setStrandB(DNAStrand strandB){
@@ -69,11 +71,6 @@ public class DoubleHelix{
       return false;
     }
   }
-  //TODO: Implement method for adding nucleotide to the end of one strand
-  //  Must be able to base-pair with nucleotide on other strand, if necessary
-  //  Must establish physical links between base-paired nucleotides
-  //  Trust DNAStrand to establish physical links to adjacent nucleotides in the same strand
-  //  Update uNA.
 
   //TODO: When would I need this? Are these just arbitrary getters? Attempt to eliminate.
   public Nucleotide getUNA(){
