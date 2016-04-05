@@ -76,9 +76,10 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     n.myBackboneLayer = null;
     n.myImages = graphics().createGroupLayer();
     n.drawNucleotideImage();
-    n.level.addLayer(n.myLayer);
-    n.level.addLayer(n.myNucleobaseLayer);
-    //n.level.addLayer(n.myImages);
+    //n.level.addLayer(n.myLayer);
+    //n.level.addLayer(n.myNucleobaseLayer);
+    n.myImages.setDepth(3f);
+    n.level.addLayer(n.myImages);
     BodyDef groundBodyDef = new BodyDef();
     n.groundBody = level.physicsWorld().createBody(groundBodyDef); // groundBody only relevant for MouseJoint
     n.strand = null;
@@ -140,6 +141,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
           myNucleobaseLayer.setTranslation(x(), y());
           myNucleobaseLayer.setRotation(ang());
           myNucleobaseLayer.setDepth(3f);
+          myImages.add(myNucleobaseLayer);
         }
 
         @Override
@@ -158,14 +160,14 @@ public class Nucleotide implements CollisionHandler, ContactListener{
       myBackboneImage.addCallback(new Callback<Image>() {
         @Override
         public void onSuccess(Image myBackboneImage){
-          myBackboneLayer.setOrigin(myBackboneImage.width() / 2f, myBackboneImage.height() / 2f);
+          myBackboneLayer.setOrigin(myBackboneImage.width()/2f, myBackboneImage.height() + getHeight()/2f);
           //want backbone to have same scale as the Nucleotide it's attached to.
           myBackboneLayer.setScale(getWidth()/myBackboneImage.width(), getHeight()/myBackboneImage.height());
           //place equal on x axis, above on y axis. 
           myBackboneLayer.setTranslation(x(), y()-getHeight()/2f);
           myBackboneLayer.setRotation(ang());
           myBackboneLayer.setDepth(4f);
-          level.addLayer(myBackboneLayer);
+          myImages.add(myBackboneLayer);
         }
         @Override
         public void onFailure(Throwable err){
@@ -232,6 +234,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
         mouseJoint = null;
       }
     });
+    myImages.add(myLayer);
   }
 
   // other is the new Nucleotide being added to the strand.
@@ -343,14 +346,16 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     float x = (x() * alpha) + (prevX * (1f - alpha));
     float y = (y() * alpha) + (prevY * (1f - alpha));
     float a = (ang() * alpha) + (prevA * (1f - alpha));
-    myLayer.setTranslation(x, y);
-    myLayer.setRotation(a);
-    myNucleobaseLayer.setTranslation(x,y);
-    myNucleobaseLayer.setRotation(a);
-    if(myBackboneLayer != null){
-      myBackboneLayer.setTranslation(x,y-(getHeight()/2f));
-      myBackboneLayer.setRotation(a);
-    }
+    //myLayer.setTranslation(x, y);
+    //myLayer.setRotation(a);
+    //myNucleobaseLayer.setTranslation(x,y);
+    //myNucleobaseLayer.setRotation(a);
+    //if(myBackboneLayer != null){
+      //myBackboneLayer.setTranslation(x,y-(getHeight()/2f));
+      //myBackboneLayer.setRotation(a);
+    //}
+    myImages.setTranslation(x,y);
+    myImages.setRotation(a);
   }
   //beginContact, endContact, postSolve and preSolve are all required functions
   //for the ContactListener interface.
