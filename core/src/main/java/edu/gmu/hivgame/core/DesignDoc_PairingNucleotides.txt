@@ -3,7 +3,7 @@ Design doc for getting nucleotides to pair into double strands
 **Note: UNA = Unpaired Nucleotide A (in strand A of a double helix)
 - Nucleotide x collision with another nucleotide y:
 - Nucleotide.handleCollison() (from interface CollisionHandler)
-- x is in already in a DNAStrand and is responsible for grabbing y if
+- x is already in a DNAStrand and is responsible for grabbing y if
   it is a free Nucleotide
 - y will do nothing
 - x Checks if y is free
@@ -32,5 +32,4 @@ Design for binding/unbinding of RT:
   with the RT and not already bound.
 
 Meet again next Tuesday!
-Add stuff for binding/unbinding of RT
 Graphics are next! Make RT look pretty, give strands a backbone
