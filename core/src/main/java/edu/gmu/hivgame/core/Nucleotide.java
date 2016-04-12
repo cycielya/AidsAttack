@@ -54,6 +54,7 @@ public class Nucleotide implements CollisionHandler, ContactListener{
   private ImageLayer myLayer;
   private ImageLayer myNucleobaseLayer;
   private ImageLayer myBackboneLayer;
+  private ImageLayer myHelixLayer;
   private GroupLayer myImages;
   private Nucleotide pair; // the Nucleotide it is base-paired with
   private Body groundBody; // used for MouseJoint, does not have relevance to anything else
@@ -180,7 +181,35 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     }
   }
 
-
+  private void createHelixImage(String imageName){
+    Image myHelixImage = assets().getImage("images/"+imageName);
+    myHelixLayer = graphics().createImageLayer(myHelixImage);
+    myHelixImage.addCallback(new Callback<Image>(){
+      @Override
+      public void onSuccess(Image myHelixImage){
+        myHelixLayer.setOrigin(myHelixImage.width()/2f, myHelixImage.height()/2f);
+        //note: no translation/rotation here, but do scale to image size.
+        myHelixLayer.setScale(getWidth()/myHelixImage.width(), getHeight()/myHelixImage.height());
+        myHelixLayer.setDepth(4f);
+        //myImages.remove(myLayer);
+        myLayer.setVisible(false);
+        myNucleobaseLayer.setVisible(false);
+        myImages.add(myHelixLayer);
+      }
+      @Override
+      public void onFailure(Throwable err){
+        log().error("Error loading image: "+err.getMessage());
+        System.out.println("Adding helix image failed.");
+      }
+    });
+  }
+  private void createHelixImageTop(){
+    createHelixImage("DoubleHelix_top_good.png");
+    myImages.remove(myBackboneLayer);
+  }
+  private void createHelixImageBottom(){
+    createHelixImage("DoubleHelix_bottom_good.png");
+  }
 
   private void drawNucleotideImage(){
     float imageSize = 100;
@@ -306,6 +335,8 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     def.localAnchorB.set(0f+other.getWidth()/2f, 0f-other.getHeight()/2f); //position at upper right corner
     RopeJoint rj2 = (RopeJoint) this.level.physicsWorld().createJoint(def);
     System.out.println("Base-paired!");
+    this.createHelixImageTop();
+    other.createHelixImageBottom();
     if (this.pairsWith(other)){
       return true;
     }
