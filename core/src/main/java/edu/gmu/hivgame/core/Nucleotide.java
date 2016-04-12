@@ -138,8 +138,8 @@ public class Nucleotide implements CollisionHandler, ContactListener{
         public void onSuccess(Image myNucleobaseImage) {
           myNucleobaseLayer.setOrigin(myNucleobaseImage.width() / 2f, myNucleobaseImage.height() / 2f);
           myNucleobaseLayer.setScale(getWidth()/myNucleobaseImage.width(),getHeight()/myNucleobaseImage.height());
-          myNucleobaseLayer.setTranslation(x(), y());
-          myNucleobaseLayer.setRotation(ang());
+          //myNucleobaseLayer.setTranslation(x(), y());
+          //myNucleobaseLayer.setRotation(ang());
           myNucleobaseLayer.setDepth(3f);
           myImages.add(myNucleobaseLayer);
         }
@@ -162,10 +162,12 @@ public class Nucleotide implements CollisionHandler, ContactListener{
         public void onSuccess(Image myBackboneImage){
           myBackboneLayer.setOrigin(myBackboneImage.width()/2f, myBackboneImage.height() + getHeight()/2f);
           //want backbone to have same scale as the Nucleotide it's attached to.
+          //NEW: don't set translation/rotation here. Causes double-scaling/translating when updated
+          //in paint() method as a part of myImages.
           myBackboneLayer.setScale(getWidth()/myBackboneImage.width(), getHeight()/myBackboneImage.height());
           //place equal on x axis, above on y axis. 
-          myBackboneLayer.setTranslation(x(), y()-getHeight()/2f);
-          myBackboneLayer.setRotation(ang());
+          //myBackboneLayer.setTranslation(x(), y()-getHeight()/2f);
+          //myBackboneLayer.setRotation(ang());
           myBackboneLayer.setDepth(4f);
           myImages.add(myBackboneLayer);
         }
@@ -192,8 +194,8 @@ public class Nucleotide implements CollisionHandler, ContactListener{
     myLayer = graphics().createImageLayer(image);
     myLayer.setOrigin(image.width() / 2f, image.height() / 2f);
     myLayer.setScale(getWidth()/imageSize,getHeight()/imageSize);
-    myLayer.setTranslation(x(), y());
-    myLayer.setRotation(ang());
+    //myLayer.setTranslation(x(), y());
+    //myLayer.setRotation(ang());
     myLayer.setDepth(2.5f);
 
     // intended for allowing click+drag control of DNA strands and
